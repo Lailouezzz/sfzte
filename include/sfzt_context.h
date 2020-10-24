@@ -30,16 +30,16 @@
 #define ZERO        1 << 1
 #define CARRY       1 << 0
 
-#define SET_NEGATIVE(status, a) 
+#define IS_CARRY(ctx) ((ctx).status && CARRY != 0)
 
 
 struct sfzt_ctx
 {
-    BusRead read;
-    BusWrite write;
+    bus_read read;
+    bus_write write;
 
     sfzt_addr pc; // program counter
-    int8_t a, x, y; // 3 registers
+    byte a, x, y; // 3 registers
     // 8 N (negative) - 7 V (overflow)  - 6 ignored  - 5 B (break) 
     // 4 D (decimal)  - 3 I (interrupt) - 2 Z (zero) - 1 C (carry)
     byte status;

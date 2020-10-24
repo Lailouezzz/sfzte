@@ -20,12 +20,13 @@
 #ifndef H_UTIL
 #define H_UTIL
 #include <stdint.h>
+#define UNUSED __attribute__((unused))
 
 
 typedef uint8_t byte;
 typedef uint16_t sfzt_addr;
-typedef byte (*BusRead)(uint16_t);
-typedef void (*BusWrite)(byte, uint16_t);
+typedef byte (*bus_read)(uint16_t);
+typedef void (*bus_write)(byte, uint16_t);
 
 
 #endif /// #ifndef H_UTIL

@@ -32,7 +32,7 @@ sfzt_addr addr_absy(sfzt_ctx_s *ctx);
 
 sfzt_addr addr_imm(sfzt_ctx_s *ctx);
 
-sfzt_addr addr_imp(sfzt_ctx_s *ctx);
+sfzt_addr addr_imp(sfzt_ctx_s UNUSED *ctx);
 
 sfzt_addr addr_ind(sfzt_ctx_s *ctx);
 sfzt_addr addr_xind(sfzt_ctx_s *ctx);
