@@ -1,0 +1,8 @@
+# Ignore all .* dir (.vscode for example)
+.*/
+
+# Ignore build dir
+build/
+
+# Ignore executable
+sfzte
