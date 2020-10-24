@@ -18,25 +18,32 @@
  *
  * ************************************************************************** */
 #include "addr_modes.h"
+#define CTX_READ(addr) (ctx->read(addr))
+#define OP_LO_BYTE_ADDR (ctx->pc)
+#define OP_HI_BYTE_ADDR (ctx->pc+1)
+#define OP_LO_BYTE (CTX_READ(OP_LO_BYTE_ADDR))
+#define OP_HI_BYTE (CTX_READ(OP_HI_BYTE_ADDR))
+#define REGPC (ctx->pc)
+#define REGX (ctx->x)
+#define REGY (ctx->y)
+#define CREATE_WORD(LL, HH) (LL + (HH << 8))
 
 
 sfzt_addr addr_abs(sfzt_ctx_s *ctx)
 {
-    byte lo = ctx->read(ctx->pc);
-    byte hi = ctx->read(ctx->pc+1);
-    return (sfzt_addr) (lo + (hi << 8));
+    return (sfzt_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE);
 }
 sfzt_addr addr_absx(sfzt_ctx_s *ctx)
 {
-    return addr_abs(ctx) + ctx->x;
+    return addr_abs(ctx) + REGX;
 }
 sfzt_addr addr_absy(sfzt_ctx_s *ctx)
 {
-    return addr_abs(ctx) + ctx->y;
+    return addr_abs(ctx) + REGY;
 }
 sfzt_addr addr_imm(sfzt_ctx_s *ctx)
 {
-    return ctx->pc;
+    return OP_LO_BYTE;
 }
 sfzt_addr addr_imp(sfzt_ctx_s UNUSED *ctx)
 {
@@ -45,39 +52,31 @@ sfzt_addr addr_imp(sfzt_ctx_s UNUSED *ctx)
 sfzt_addr addr_ind(sfzt_ctx_s *ctx)
 {
     sfzt_addr addr = addr_abs(ctx);
-    byte lo = ctx->read(addr);
-    byte hi = ctx->read(addr+1);
-    return (sfzt_addr) (lo + (hi << 8));
+    return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1));
 }
 sfzt_addr addr_xind(sfzt_ctx_s *ctx)
 {
-    sfzt_addr addr = (ctx->read(ctx->pc) + ctx->x) & 0x00FF;
-    byte lo = ctx->read(addr);
-    byte hi = ctx->read(addr+1);
-    return (sfzt_addr) (lo + (hi << 8));
+    sfzt_addr addr = (OP_LO_BYTE + REGX) & 0x00FF;
+    return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1));
 }
 sfzt_addr addr_indy(sfzt_ctx_s *ctx)
 {
     sfzt_addr addr = ctx->read(ctx->pc);
-    byte lo = ctx->read(addr);
-    byte hi = ctx->read(addr+1);
-    return (sfzt_addr) (lo + (hi << 8) + ctx->y);
+    return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1)) + REGY;
 }
 sfzt_addr addr_rel(sfzt_ctx_s *ctx)
 {
-    sfzt_addr addr = ctx->pc;
-    int8_t bb = (int8_t) ctx->read(ctx->pc);
-    return (sfzt_addr) (addr + bb);
+    return (sfzt_addr) (REGPC + (int8_t) OP_LO_BYTE);
 }
 sfzt_addr addr_zpg(sfzt_ctx_s *ctx)
 {
-    return (sfzt_addr) (ctx->read(ctx->pc) & 0x00FF);
+    return (sfzt_addr) (OP_LO_BYTE & 0x00FF);
 }
 sfzt_addr addr_zpgx(sfzt_ctx_s *ctx)
 {
-    return (sfzt_addr) ((addr_zpg(ctx) + ctx->x) & 0x00FF);
+    return (sfzt_addr) ((addr_zpg(ctx) + REGX) & 0x00FF);
 }
 sfzt_addr addr_zpgy(sfzt_ctx_s *ctx)
 {
-    return (sfzt_addr) ((addr_zpg(ctx) + ctx->y) & 0x00FF);
+    return (sfzt_addr) ((addr_zpg(ctx) + REGY) & 0x00FF);
 }
