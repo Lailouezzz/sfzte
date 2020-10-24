@@ -29,54 +29,50 @@
 #define CREATE_WORD(LL, HH) (LL + (HH << 8))
 
 
-sfzt_addr addr_abs(sfzt_ctx_s *ctx)
+DECL_AM(abs)
 {
     return (sfzt_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE);
 }
-sfzt_addr addr_absx(sfzt_ctx_s *ctx)
+DECL_AM(absx)
 {
     return addr_abs(ctx) + REGX;
 }
-sfzt_addr addr_absy(sfzt_ctx_s *ctx)
+DECL_AM(absy)
 {
     return addr_abs(ctx) + REGY;
 }
-sfzt_addr addr_imm(sfzt_ctx_s *ctx)
+DECL_AM(imm)
 {
-    return OP_LO_BYTE;
+    return (sfzt_addr) OP_LO_BYTE;
 }
-sfzt_addr addr_imp(sfzt_ctx_s UNUSED *ctx)
-{
-    return 0;
-}
-sfzt_addr addr_ind(sfzt_ctx_s *ctx)
+DECL_AM(ind)
 {
     sfzt_addr addr = addr_abs(ctx);
     return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1));
 }
-sfzt_addr addr_xind(sfzt_ctx_s *ctx)
+DECL_AM(xind)
 {
     sfzt_addr addr = (OP_LO_BYTE + REGX) & 0x00FF;
     return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1));
 }
-sfzt_addr addr_indy(sfzt_ctx_s *ctx)
+DECL_AM(indy)
 {
     sfzt_addr addr = ctx->read(ctx->pc);
     return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1)) + REGY;
 }
-sfzt_addr addr_rel(sfzt_ctx_s *ctx)
+DECL_AM(rel)
 {
     return (sfzt_addr) (REGPC + (int8_t) OP_LO_BYTE);
 }
-sfzt_addr addr_zpg(sfzt_ctx_s *ctx)
+DECL_AM(zpg)
 {
     return (sfzt_addr) (OP_LO_BYTE & 0x00FF);
 }
-sfzt_addr addr_zpgx(sfzt_ctx_s *ctx)
+DECL_AM(zpgx)
 {
     return (sfzt_addr) ((addr_zpg(ctx) + REGX) & 0x00FF);
 }
-sfzt_addr addr_zpgy(sfzt_ctx_s *ctx)
+DECL_AM(zpgy)
 {
     return (sfzt_addr) ((addr_zpg(ctx) + REGY) & 0x00FF);
 }

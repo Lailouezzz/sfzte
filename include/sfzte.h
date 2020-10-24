@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * sfzte.h -- All necessary for 6502 emulation
+ * sfzte.h -- All necessary include for 6502 emulation
  *
  * Copyright (C) 2020 Lailouezzz <alanlebouder@gmail.com>
  *
@@ -22,5 +22,6 @@
 
 # include "sfzt_context.h"
 # include "addr_modes.h"
+# include "util.h"
 
 #endif /// #ifndef H_SFZTE

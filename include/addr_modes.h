@@ -19,30 +19,28 @@
  * ************************************************************************** */
 #ifndef H_ADDR_MODE
 #define H_ADDR_MODE
-#include <stdint.h>
 #include "sfzt_context.h"
 #include "util.h"
+#define DECL_AM(am) sfzt_addr addr_##am(sfzt_ctx_s *ctx)
 
 
 typedef sfzt_addr (*addr_mode)(sfzt_ctx_s *);
 
-sfzt_addr addr_abs(sfzt_ctx_s *ctx);
-sfzt_addr addr_absx(sfzt_ctx_s *ctx);
-sfzt_addr addr_absy(sfzt_ctx_s *ctx);
+DECL_AM(abs);
+DECL_AM(absx);
+DECL_AM(absy);
 
-sfzt_addr addr_imm(sfzt_ctx_s *ctx);
+DECL_AM(imm);
 
-sfzt_addr addr_imp(sfzt_ctx_s UNUSED *ctx);
+DECL_AM(ind);
+DECL_AM(xind);
+DECL_AM(indy);
 
-sfzt_addr addr_ind(sfzt_ctx_s *ctx);
-sfzt_addr addr_xind(sfzt_ctx_s *ctx);
-sfzt_addr addr_indy(sfzt_ctx_s *ctx);
+DECL_AM(rel);
 
-sfzt_addr addr_rel(sfzt_ctx_s *ctx);
-
-sfzt_addr addr_zpg(sfzt_ctx_s *ctx);
-sfzt_addr addr_zpgx(sfzt_ctx_s *ctx);
-sfzt_addr addr_zpgy(sfzt_ctx_s *ctx);
+DECL_AM(zpg);
+DECL_AM(zpgx);
+DECL_AM(zpgy);
 
 
 #endif /// #ifndef H_ADDR_MODE
