@@ -23,10 +23,11 @@
 #define UNUSED __attribute__((unused))
 
 
-typedef uint8_t byte;
+typedef uint8_t BYTE;
+typedef uint16_t WORD;
 typedef uint16_t sfzt_addr;
-typedef byte (*bus_read)(uint16_t);
-typedef void (*bus_write)(byte, uint16_t);
+typedef BYTE (*bus_read)(sfzt_addr);
+typedef void (*bus_write)(BYTE, sfzt_addr);
 
 
 #endif /// #ifndef H_UTIL

@@ -21,16 +21,18 @@
 #define H_OPCODE
 #include "sfzt_context.h"
 #include "util.h"
-#define DECL_OPCODE(OPCODE, CYCLE) void opcode_##OPCODE(sfzt_ctx_s *ctx); \
+#define DECL_OPCODE(OPCODE, CYCLE) void opcode_##OPCODE(sfzt_ctx_s *ctx, \
+                                                        sfzt_addr ea); \
                             uint8_t opcode_cycle_##OPCODE = CYCLE
-#define IMP_OPCODE(OPCODE) void opcode_##OPCODE(sfzt_ctx_s *ctx)
+#define IMP_OPCODE(OPCODE) void opcode_##OPCODE(sfzt_ctx_s *ctx, sfzt_addr ea)
 
 
-typedef void (*opcode)(sfzt_ctx_s *);
+typedef void (*opcode)(sfzt_ctx_s *, sfzt_addr);
 
 DECL_OPCODE(adc, 0); // Add Memory to Accumulator with Carry
 DECL_OPCODE(and, 0); // AND Memory with Accumulator
-DECL_OPCODE(asl, 0); // Shift Left One Bit (Memory or Accumulator)
+DECL_OPCODE(asl, 0); // Shift Left One Bit (Memory)
+DECL_OPCODE(asla, 0);// Shift Left One Bit (Accumulator)
 DECL_OPCODE(bcc, 0); // Branch on Carry Clear
 DECL_OPCODE(bcs, 0); // Branch on Carry Set
 DECL_OPCODE(beq, 0); // Branch on Result Zero

@@ -18,19 +18,56 @@
  *
  * ************************************************************************** */
 #include "opcode.h"
+#define READ8_EA (ctx->read(ea))
+#define WRITE8_EA(b) (ctx->write((b), ea))
+#define REGA (ctx->a)
+
+#define CALC_CARRY(r)       if((r & 0xFF00) != 0) SET_CARRY(*ctx); \
+                                             else CLEAR_CARRY(*ctx);
+#define CALC_ZERO(r)        if((r & 0x00FF) == 0) SET_ZERO(*ctx); \
+                                             else CLEAR_ZERO(*ctx);
+#define CALC_OVERFLOW(r, m, n)    if((((r ^ n) & (r ^ m)) \
+                                    & 0x80) != 0) SET_OVERFLOW(*ctx); \
+                                             else CLEAR_OVERFLOW(*ctx);
+#define CALC_NEGATIVE(r)    if((r & 0x0080) != 0) SET_NEGATIVE(*ctx); \
+                                             else CLEAR_NEGATIVE(*ctx);
 
 
 IMP_OPCODE(adc)
 {
-
+    BYTE value = READ8_EA;
+    WORD result = (WORD) (REGA + value + (IS_CARRY(*ctx) ? 1 : 0));
+    CALC_CARRY(result);
+    CALC_ZERO(result);
+    CALC_OVERFLOW(result, value, REGA);
+    CALC_NEGATIVE(result);
+    REGA = (BYTE)result;
+    return;
 }
 IMP_OPCODE(and)
 {
-
+    REGA &= READ8_EA;
+    CALC_ZERO(REGA);
+    CALC_NEGATIVE(REGA);
+    return;
 }
 IMP_OPCODE(asl)
 {
-
+    WORD result = READ8_EA << 1;
+    CALC_CARRY(result);
+    CALC_ZERO(result);
+    CALC_NEGATIVE(result);
+    WRITE8_EA((BYTE)result);
+    return;
+}
+IMP_OPCODE(asla)
+{
+    WORD result = READ8_EA << 1;
+    CALC_CARRY(result);
+    CALC_ZERO(result);
+    CALC_NEGATIVE(result);
+    REGA = (BYTE)result;
+    return;
 }
 IMP_OPCODE(bcc)
 {
