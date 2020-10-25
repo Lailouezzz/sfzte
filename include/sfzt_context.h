@@ -22,37 +22,39 @@
 #include <stdint.h>
 #include "util.h"
 
-#define FLAG_NEGATIVE    (1 << 7)
-#define FLAG_OVERFLOW    (1 << 6)
-#define FLAG_BREAK       (1 << 4)
-#define FLAG_DECIMAL     (1 << 3)
-#define FLAG_INTERRUPT   (1 << 2)
-#define FLAG_ZERO        (1 << 1)
-#define FLAG_CARRY       (1 << 0)
+#define STACK_ADDR      0x0100  
 
-#define IS_CARRY(ctx)       (((ctx).status & FLAG_CARRY) != 0)
-#define IS_ZERO(ctx)        (((ctx).status & FLAG_ZERO) != 0)
-#define IS_INTERRUPT(ctx)   (((ctx).status & FLAG_INTERRUPT) != 0)
-#define IS_DECIMAL(ctx)     (((ctx).status & FLAG_DECIMAL) != 0)
-#define IS_BREAK(ctx)       (((ctx).status & FLAG_BREAK) != 0)
-#define IS_OVERFLOW(ctx)    (((ctx).status & FLAG_OVERFLOW) != 0)
-#define IS_NEGATIVE(ctx)    (((ctx).status & FLAG_NEGATIVE) != 0)
+#define FLAG_NEGATIVE   (1 << 7)
+#define FLAG_OVERFLOW   (1 << 6)
+#define FLAG_BREAK      (1 << 4)
+#define FLAG_DECIMAL    (1 << 3)
+#define FLAG_INTERRUPT  (1 << 2)
+#define FLAG_ZERO       (1 << 1)
+#define FLAG_CARRY      (1 << 0)
 
-#define SET_CARRY(ctx)      ((ctx).status |= FLAG_CARRY)
-#define SET_ZERO(ctx)       ((ctx).status |= FLAG_ZERO)
-#define SET_INTERRUPT(ctx)  ((ctx).status |= FLAG_INTERRUPT)
-#define SET_DECIMAL(ctx)    ((ctx).status |= FLAG_DECIMAL)
-#define SET_BREAK(ctx)      ((ctx).status |= FLAG_BREAK)
-#define SET_OVERFLOW(ctx)   ((ctx).status |= FLAG_OVERFLOW)
-#define SET_NEGATIVE(ctx)   ((ctx).status |= FLAG_NEGATIVE)
+#define IS_CARRY(ctx)       (((ctx).sr & FLAG_CARRY) != 0)
+#define IS_ZERO(ctx)        (((ctx).sr & FLAG_ZERO) != 0)
+#define IS_INTERRUPT(ctx)   (((ctx).sr & FLAG_INTERRUPT) != 0)
+#define IS_DECIMAL(ctx)     (((ctx).sr & FLAG_DECIMAL) != 0)
+#define IS_BREAK(ctx)       (((ctx).sr & FLAG_BREAK) != 0)
+#define IS_OVERFLOW(ctx)    (((ctx).sr & FLAG_OVERFLOW) != 0)
+#define IS_NEGATIVE(ctx)    (((ctx).sr & FLAG_NEGATIVE) != 0)
 
-#define CLEAR_CARRY(ctx)        ((ctx).status &= (BYTE)(~FLAG_CARRY))
-#define CLEAR_ZERO(ctx)         ((ctx).status &= (BYTE)(~FLAG_ZERO))
-#define CLEAR_INTERRUPT(ctx)    ((ctx).status &= (BYTE)(~FLAG_INTERRUPT))
-#define CLEAR_DECIMAL(ctx)      ((ctx).status &= (BYTE)(~FLAG_DECIMAL))
-#define CLEAR_BREAK(ctx)        ((ctx).status &= (BYTE)(~FLAG_BREAK))
-#define CLEAR_OVERFLOW(ctx)     ((ctx).status &= (BYTE)(~FLAG_OVERFLOW))
-#define CLEAR_NEGATIVE(ctx)     ((ctx).status &= (BYTE)(~FLAG_NEGATIVE))
+#define SET_CARRY(ctx)      ((ctx).sr |= FLAG_CARRY)
+#define SET_ZERO(ctx)       ((ctx).sr |= FLAG_ZERO)
+#define SET_INTERRUPT(ctx)  ((ctx).sr |= FLAG_INTERRUPT)
+#define SET_DECIMAL(ctx)    ((ctx).sr |= FLAG_DECIMAL)
+#define SET_BREAK(ctx)      ((ctx).sr |= FLAG_BREAK)
+#define SET_OVERFLOW(ctx)   ((ctx).sr |= FLAG_OVERFLOW)
+#define SET_NEGATIVE(ctx)   ((ctx).sr |= FLAG_NEGATIVE)
+
+#define CLEAR_CARRY(ctx)        ((ctx).sr &= (BYTE)(~FLAG_CARRY))
+#define CLEAR_ZERO(ctx)         ((ctx).sr &= (BYTE)(~FLAG_ZERO))
+#define CLEAR_INTERRUPT(ctx)    ((ctx).sr &= (BYTE)(~FLAG_INTERRUPT))
+#define CLEAR_DECIMAL(ctx)      ((ctx).sr &= (BYTE)(~FLAG_DECIMAL))
+#define CLEAR_BREAK(ctx)        ((ctx).sr &= (BYTE)(~FLAG_BREAK))
+#define CLEAR_OVERFLOW(ctx)     ((ctx).sr &= (BYTE)(~FLAG_OVERFLOW))
+#define CLEAR_NEGATIVE(ctx)     ((ctx).sr &= (BYTE)(~FLAG_NEGATIVE))
 
 
 struct sfzt_ctx
@@ -64,7 +66,7 @@ struct sfzt_ctx
     BYTE a, x, y; // 3 registers
     // 8 N (negative) - 7 V (overflow)  - 6 ignored  - 5 B (break) 
     // 4 D (decimal)  - 3 I (interrupt) - 2 Z (zero) - 1 C (carry)
-    BYTE status;
+    BYTE sr;
     BYTE sp;
 };
 

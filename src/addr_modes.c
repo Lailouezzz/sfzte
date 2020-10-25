@@ -26,12 +26,15 @@
 #define REGPC (ctx->pc)
 #define REGX (ctx->x)
 #define REGY (ctx->y)
-#define CREATE_WORD(LL, HH) (LL + (HH << 8))
 
+
+// REGPC is positionned after the opcode so first byte is at REGPC
 
 DECL_AM(abs)
 {
-    return (sfzt_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE);
+    sfzt_addr ea = (sfzt_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE);
+    ctx->pc += 2;
+    return ea;
 }
 DECL_AM(absx)
 {
@@ -43,36 +46,49 @@ DECL_AM(absy)
 }
 DECL_AM(imm)
 {
-    return (sfzt_addr) OP_LO_BYTE;
+    sfzt_addr ea = (sfzt_addr) OP_LO_BYTE;
+    ctx->pc += 1;
+    return ea;
 }
 DECL_AM(ind)
 {
-    sfzt_addr addr = addr_abs(ctx);
-    return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1));
+    sfzt_addr ea = addr_abs(ctx);
+    ea = (sfzt_addr) CREATE_WORD(CTX_READ(ea), CTX_READ(ea+1));
+    return ea;
 }
 DECL_AM(xind)
 {
-    sfzt_addr addr = (OP_LO_BYTE + REGX) & 0x00FF;
-    return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1));
+    sfzt_addr ea = (OP_LO_BYTE + REGX) & 0x00FF;
+    ea = (sfzt_addr) CREATE_WORD(CTX_READ(ea), CTX_READ(ea+1));
+    ctx->pc += 1;
+    return ea;
 }
 DECL_AM(indy)
 {
-    sfzt_addr addr = ctx->read(ctx->pc);
-    return (sfzt_addr) CREATE_WORD(CTX_READ(addr), CTX_READ(addr+1)) + REGY;
+    sfzt_addr ea = CTX_READ(ctx->pc);
+    ea = (sfzt_addr) CREATE_WORD(CTX_READ(ea), CTX_READ(ea+1)) + REGY;
+    ctx->pc += 1;
+    return ea;
 }
 DECL_AM(rel)
 {
-    return (sfzt_addr) (REGPC + (int8_t) OP_LO_BYTE);
+    sfzt_addr ea = (sfzt_addr) ((REGPC+1) + (int8_t) OP_LO_BYTE);
+    ctx->pc += 1;
+    return ea;
 }
 DECL_AM(zpg)
 {
-    return (sfzt_addr) (OP_LO_BYTE & 0x00FF);
+    sfzt_addr ea = (sfzt_addr) (OP_LO_BYTE & 0x00FF);
+    ctx->pc += 1;
+    return ea;
 }
 DECL_AM(zpgx)
 {
-    return (sfzt_addr) ((addr_zpg(ctx) + REGX) & 0x00FF);
+    sfzt_addr ea = (sfzt_addr) ((addr_zpg(ctx) + REGX) & 0x00FF);
+    return ea;
 }
 DECL_AM(zpgy)
 {
-    return (sfzt_addr) ((addr_zpg(ctx) + REGY) & 0x00FF);
+    sfzt_addr ea = (sfzt_addr) ((addr_zpg(ctx) + REGY) & 0x00FF);
+    return ea;
 }

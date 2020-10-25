@@ -27,6 +27,12 @@
 #define IMP_OPCODE(OPCODE) void opcode_##OPCODE(sfzt_ctx_s *ctx, sfzt_addr ea)
 
 
+void push_byte(BYTE b, sfzt_ctx_s *ctx);
+void push_word(WORD w, sfzt_ctx_s *ctx);
+
+BYTE pull_byte(sfzt_ctx_s *ctx);
+WORD pull_word(sfzt_ctx_s *ctx);
+
 typedef void (*opcode)(sfzt_ctx_s *, sfzt_addr);
 
 DECL_OPCODE(adc, 0); // Add Memory to Accumulator with Carry
@@ -62,15 +68,18 @@ DECL_OPCODE(jsr, 0); // Jump to New Location Saving Return Address
 DECL_OPCODE(lda, 0); // Load Accumulator with Memory
 DECL_OPCODE(ldx, 0); // Load Index X with Memory
 DECL_OPCODE(ldy, 0); // Load Index Y with Memory
-DECL_OPCODE(lsr, 0); // Shift One Bit Right (Memory or Accumulator)
+DECL_OPCODE(lsr, 0); // Shift One Bit Right (Memory)
+DECL_OPCODE(lsra, 0);// Shift One Bit Right (Accumulator)
 DECL_OPCODE(nop, 0); // No Operation
 DECL_OPCODE(ora, 0); // OR Memory with Accumulator
 DECL_OPCODE(pha, 0); // Push Accumulator on Stack
 DECL_OPCODE(php, 0); // Push Processor Status on Stack
 DECL_OPCODE(pla, 0); // Pull Accumulator from Stack
 DECL_OPCODE(plp, 0); // Pull Processor Status from Stack
-DECL_OPCODE(rol, 0); // Rotate One Bit Left (Memory or Accumulator)
-DECL_OPCODE(ror, 0); // Rotate One Bit Right (Memory or Accumulator)
+DECL_OPCODE(rol, 0); // Rotate One Bit Left (Memory)
+DECL_OPCODE(rola, 0);// Rotate One Bit Left (Accumulator)
+DECL_OPCODE(ror, 0); // Rotate One Bit Right (Memory)
+DECL_OPCODE(rora, 0);// Rotate One Bit Right (Accumulator)
 DECL_OPCODE(rti, 0); // Return from Interrupt
 DECL_OPCODE(rts, 0); // Return from Subroutine
 DECL_OPCODE(sbc, 0); // Subtract Memory from Accumulator with Borrow
