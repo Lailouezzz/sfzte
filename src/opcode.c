@@ -18,6 +18,7 @@
  *
  * ************************************************************************** */
 #include "opcode.h"
+#include <stdio.h>
 
 #define CALC_CARRY(r)       if((r & 0xFF00) != 0) SET_CARRY(*ctx); \
                                              else CLEAR_CARRY(*ctx);
@@ -57,6 +58,7 @@ WORD pull_word(sfzt_ctx_s *ctx)
 
 IMP_OPCODE(adc)
 {
+    printf("adc");
     BYTE value = READ8_EA;
     WORD result = (WORD) (REGA + value + (IS_CARRY(*ctx) ? 1u : 0u));
     CALC_CARRY(result);
@@ -68,6 +70,7 @@ IMP_OPCODE(adc)
 }
 IMP_OPCODE(and)
 {
+    printf("and");
     REGA &= READ8_EA;
     CALC_ZERO(REGA);
     CALC_NEGATIVE(REGA);
@@ -75,6 +78,7 @@ IMP_OPCODE(and)
 }
 IMP_OPCODE(asl)
 {
+    printf("asl");
     WORD result = READ8_EA << 1;
     CALC_CARRY(result);
     CALC_ZERO(result);
@@ -84,6 +88,7 @@ IMP_OPCODE(asl)
 }
 IMP_OPCODE(asla)
 {
+    printf("asla");
     WORD result = READ8_EA << 1;
     CALC_CARRY(result);
     CALC_ZERO(result);
@@ -93,6 +98,7 @@ IMP_OPCODE(asla)
 }
 IMP_OPCODE(bcc)
 {
+    printf("bcc");
     if(!IS_CARRY(*ctx))
     {
         REGPC = ea;
@@ -101,6 +107,7 @@ IMP_OPCODE(bcc)
 }
 IMP_OPCODE(bcs)
 {
+    printf("bcs");
     if(IS_CARRY(*ctx))
     {
         REGPC = ea;
@@ -109,6 +116,7 @@ IMP_OPCODE(bcs)
 }
 IMP_OPCODE(beq)
 {
+    printf("beq");
     if(IS_ZERO(*ctx))
     {
         REGPC = ea;
@@ -117,6 +125,7 @@ IMP_OPCODE(beq)
 }
 IMP_OPCODE(bit)
 {
+    printf("bit");
     BYTE value = READ8_EA;
     BYTE result = REGA & value;
     CALC_ZERO(result);
@@ -131,6 +140,7 @@ IMP_OPCODE(bit)
 }
 IMP_OPCODE(bmi)
 {
+    printf("bmi");
     if(IS_NEGATIVE(*ctx))
     {
         REGPC = ea;
@@ -139,6 +149,7 @@ IMP_OPCODE(bmi)
 }
 IMP_OPCODE(bne)
 {
+    printf("bne");
     if(!IS_ZERO(*ctx))
     {
         REGPC = ea;
@@ -147,6 +158,7 @@ IMP_OPCODE(bne)
 }
 IMP_OPCODE(bpl)
 {
+    printf("bpl");
     if(!IS_NEGATIVE(*ctx))
     {
         REGPC = ea;
@@ -155,6 +167,7 @@ IMP_OPCODE(bpl)
 }
 IMP_OPCODE(brk)
 {
+    printf("brk");
     UNUSED(ea);
     REGPC++;
     push_word(REGPC, ctx);
@@ -165,6 +178,7 @@ IMP_OPCODE(brk)
 }
 IMP_OPCODE(bvc)
 {
+    printf("bvc");
     if(!IS_OVERFLOW(*ctx))
     {
         REGPC = ea;
@@ -173,6 +187,7 @@ IMP_OPCODE(bvc)
 }
 IMP_OPCODE(bvs)
 {
+    printf("bvs");
     if(IS_OVERFLOW(*ctx))
     {
         REGPC = ea;
@@ -181,30 +196,35 @@ IMP_OPCODE(bvs)
 }
 IMP_OPCODE(clc)
 {
+    printf("clc");
     UNUSED(ea);
     CLEAR_CARRY(*ctx);
     return;
 }
 IMP_OPCODE(cld)
 {
+    printf("cld");
     UNUSED(ea);
     CLEAR_DECIMAL(*ctx);
     return;
 }
 IMP_OPCODE(cli)
 {
+    printf("cli");
     UNUSED(ea);
     CLEAR_INTERRUPT(*ctx);
     return;
 }
 IMP_OPCODE(clv)
 {
+    printf("clv");
     UNUSED(ea);
     CLEAR_OVERFLOW(*ctx);
     return;
 }
 IMP_OPCODE(cmp)
 {
+    printf("cmp");
     BYTE value = READ8_EA;
     BYTE result = REGA - value;
     CALC_NEGATIVE(result);
@@ -223,6 +243,7 @@ IMP_OPCODE(cmp)
 }
 IMP_OPCODE(cpx)
 {
+    printf("cpx");
     BYTE value = READ8_EA;
     BYTE result = REGX - value;
     CALC_NEGATIVE(result);
@@ -241,6 +262,7 @@ IMP_OPCODE(cpx)
 }
 IMP_OPCODE(cpy)
 {
+    printf("cpy");
     BYTE value = READ8_EA;
     BYTE result = REGY - value;
     CALC_NEGATIVE(result);
@@ -259,6 +281,7 @@ IMP_OPCODE(cpy)
 }
 IMP_OPCODE(dec)
 {
+    printf("dec");
     BYTE value = READ8_EA;
     value--;
     CALC_NEGATIVE(value);
@@ -268,6 +291,7 @@ IMP_OPCODE(dec)
 }
 IMP_OPCODE(dex)
 {
+    printf("dex");
     UNUSED(ea);
     REGX--;
     CALC_NEGATIVE(REGX);
@@ -276,6 +300,7 @@ IMP_OPCODE(dex)
 }
 IMP_OPCODE(dey)
 {
+    printf("dey");
     UNUSED(ea);
     REGY--;
     CALC_NEGATIVE(REGY);
@@ -284,12 +309,14 @@ IMP_OPCODE(dey)
 }
 IMP_OPCODE(eor)
 {
+    printf("eor");
     REGA ^= READ8_EA;
     CALC_NEGATIVE(REGA);
     CALC_ZERO(REGA);
 }
 IMP_OPCODE(inc)
 {
+    printf("inc");
     BYTE value = READ8_EA;
     value++;
     CALC_NEGATIVE(value);
@@ -299,6 +326,7 @@ IMP_OPCODE(inc)
 }
 IMP_OPCODE(inx)
 {
+    printf("inx");
     UNUSED(ea);
     REGX++;
     CALC_NEGATIVE(REGX);
@@ -307,6 +335,7 @@ IMP_OPCODE(inx)
 }
 IMP_OPCODE(iny)
 {
+    printf("iny");
     UNUSED(ea);
     REGY++;
     CALC_NEGATIVE(REGY);
@@ -315,17 +344,20 @@ IMP_OPCODE(iny)
 }
 IMP_OPCODE(jmp)
 {
+    printf("jmp");
     REGPC = ea;
     return;
 }
 IMP_OPCODE(jsr)
 {
+    printf("jsr");
     push_word(REGPC-1, ctx);
     REGPC = ea;
     return;
 }
 IMP_OPCODE(lda)
 {
+    printf("lda");
     REGA = READ8_EA;
     CALC_NEGATIVE(REGA);
     CALC_ZERO(REGA);
@@ -333,6 +365,7 @@ IMP_OPCODE(lda)
 }
 IMP_OPCODE(ldx)
 {
+    printf("ldx");
     REGX = READ8_EA;
     CALC_NEGATIVE(REGX);
     CALC_ZERO(REGX);
@@ -340,6 +373,7 @@ IMP_OPCODE(ldx)
 }
 IMP_OPCODE(ldy)
 {
+    printf("ldy");
     REGY = READ8_EA;
     CALC_NEGATIVE(REGY);
     CALC_ZERO(REGY);
@@ -347,6 +381,7 @@ IMP_OPCODE(ldy)
 }
 IMP_OPCODE(lsr)
 {
+    printf("lsr");
     BYTE value = READ8_EA;
     BYTE result = value >> 1;
     if((value & 1))
@@ -360,6 +395,7 @@ IMP_OPCODE(lsr)
 }
 IMP_OPCODE(lsra)
 {
+    printf("lsra");
     UNUSED(ea);
     BYTE value = REGA;
     BYTE result = value >> 1;
@@ -374,12 +410,14 @@ IMP_OPCODE(lsra)
 }
 IMP_OPCODE(nop)
 {
+    printf("nop");
     UNUSED(ctx);
     UNUSED(ea);
     return;
 }
 IMP_OPCODE(ora)
 {
+    printf("ora");
     REGA |= READ8_EA;
     CALC_NEGATIVE(REGA);
     CALC_ZERO(REGA);
@@ -387,30 +425,35 @@ IMP_OPCODE(ora)
 }
 IMP_OPCODE(pha)
 {
+    printf("pha");
     UNUSED(ea);
     push_byte(REGA, ctx);
     return;
 }
 IMP_OPCODE(php)
 {
+    printf("php");
     UNUSED(ea);
     push_byte(REGSR, ctx);
     return;
 }
 IMP_OPCODE(pla)
 {
+    printf("pla");
     UNUSED(ea);
     REGA = pull_byte(ctx);
     return;
 }
 IMP_OPCODE(plp)
 {
+    printf("plp");
     UNUSED(ea);
     REGSR = pull_byte(ctx);
     return;
 }
 IMP_OPCODE(rol)
 {
+    printf("rol");
     BYTE value = READ8_EA;
     WORD result = (WORD) ((value << 1) | (IS_CARRY(*ctx) ? 1u : 0u));
 
@@ -422,6 +465,7 @@ IMP_OPCODE(rol)
 }
 IMP_OPCODE(rola)
 {
+    printf("rola");
     UNUSED(ea);
     WORD result = (WORD) ((REGA << 1) | (IS_CARRY(*ctx) ? 1u : 0u));
 
@@ -433,6 +477,7 @@ IMP_OPCODE(rola)
 }
 IMP_OPCODE(ror)
 {
+    printf("ror");
     BYTE value = READ8_EA;
     WORD result = (WORD) ((value >> 1) | (IS_CARRY(*ctx) ? (1u << 7) : 0u));
 
@@ -448,6 +493,7 @@ IMP_OPCODE(ror)
 }
 IMP_OPCODE(rora)
 {
+    printf("rora");
     UNUSED(ea);
     BYTE value = REGA;
     WORD result = (WORD) ((value >> 1) | (IS_CARRY(*ctx) ? (1u << 7) : 0u));
@@ -464,6 +510,7 @@ IMP_OPCODE(rora)
 }
 IMP_OPCODE(rti)
 {
+    printf("rti");
     UNUSED(ea);
     REGSR = pull_byte(ctx);
     REGPC = pull_word(ctx);
@@ -471,12 +518,14 @@ IMP_OPCODE(rti)
 }
 IMP_OPCODE(rts)
 {
+    printf("rts");
     UNUSED(ea);
     REGPC = pull_word(ctx) + 1;
     return;
 }
 IMP_OPCODE(sbc)
 {
+    printf("sbc");
     BYTE value = ~READ8_EA;
     WORD result = (WORD) (REGA + value + (IS_CARRY(*ctx) ? 1u : 0u));
 
@@ -490,39 +539,46 @@ IMP_OPCODE(sbc)
 }
 IMP_OPCODE(sec)
 {
+    printf("sec");
     UNUSED(ea);
     SET_CARRY(*ctx);
     return;
 }
 IMP_OPCODE(sed)
 {
+    printf("sed");
     UNUSED(ea);
     SET_DECIMAL(*ctx);
     return;
 }
 IMP_OPCODE(sei)
 {
+    printf("sei");
     UNUSED(ea);
     SET_INTERRUPT(*ctx);
     return;
 }
 IMP_OPCODE(sta)
 {
+    printf("sta");
     WRITE8_EA(REGA);
     return;
 }
 IMP_OPCODE(stx)
 {
+    printf("stx");
     WRITE8_EA(REGX);
     return;
 }
 IMP_OPCODE(sty)
 {
+    printf("sty");
     WRITE8_EA(REGY);
     return;
 }
 IMP_OPCODE(tax)
 {
+    printf("tax");
     UNUSED(ea);
     REGX = REGA;
     CALC_NEGATIVE(REGX);
@@ -531,6 +587,7 @@ IMP_OPCODE(tax)
 }
 IMP_OPCODE(tay)
 {
+    printf("tay");
     UNUSED(ea);
     REGY = REGA;
     CALC_NEGATIVE(REGY);
@@ -539,6 +596,7 @@ IMP_OPCODE(tay)
 }
 IMP_OPCODE(tsx)
 {
+    printf("tsx");
     UNUSED(ea);
     REGX = REGSP;
     CALC_NEGATIVE(REGX);
@@ -547,6 +605,7 @@ IMP_OPCODE(tsx)
 }
 IMP_OPCODE(txa)
 {
+    printf("txa");
     UNUSED(ea);
     REGA = REGX;
     CALC_NEGATIVE(REGA);
@@ -555,12 +614,14 @@ IMP_OPCODE(txa)
 }
 IMP_OPCODE(txs)
 {
+    printf("txs");
     UNUSED(ea);
     REGSP = REGX;
     return;
 }
 IMP_OPCODE(tya)
 {
+    printf("tya");
     UNUSED(ea);
     REGA = REGY;
     CALC_NEGATIVE(REGA);

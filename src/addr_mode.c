@@ -51,7 +51,7 @@ DECL_AM(aby)
 }
 DECL_AM(imm)
 {
-    sfzt_addr ea = (sfzt_addr) OP_LO_BYTE;
+    sfzt_addr ea = (sfzt_addr) OP_LO_BYTE_ADDR;
     ctx->pc += 1;
     return ea;
 }

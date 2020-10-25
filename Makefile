@@ -26,7 +26,7 @@ CC := gcc
 CWERROR := all extra conversion error write-strings fatal-errors pedantic
 CWARN := $(CWERROR:%=-W%)
 PPDEFINE := -DVERSION=\"$(VERSION)\" -DMAINTAINER=\"$(MAINTAINER_NAME)\"
-CFLAGS := -I $(INCDIR) $(CWARN) $(PPDEFINE) -std=gnu17 -pedantic -O2
+CFLAGS := -I $(INCDIR) $(CWARN) $(PPDEFINE) -g -std=gnu17 -pedantic
 LD := gcc
 LDFLAGS := 
 

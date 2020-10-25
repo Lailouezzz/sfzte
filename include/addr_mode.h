@@ -22,7 +22,7 @@
 #include "sfzt_context.h"
 #include "util.h"
 #define DECL_AM(am) sfzt_addr addr_##am(sfzt_ctx_s *ctx)
-#define AM(am) addr_##am
+#define AM(am) (addr_##am)
 
 typedef sfzt_addr (*addr_mode)(sfzt_ctx_s *);
 
@@ -48,7 +48,7 @@ DECL_AM(zpx);
 DECL_AM(zpy);
 
 static const addr_mode am_table[256] = {
-/*              0       1       2       3       4       5       6       7       8       9       A       B       C       D       E       F
+/*              0       1       2       3       4       5       6       7       8       9       A       B       C       D       E       F */
 /* 0 */     AM(imp),AM(xin),AM(nnn),AM(nnn),AM(nnn),AM(zpg),AM(zpg),AM(nnn),AM(imp),AM(imm),AM(acc),AM(nnn),AM(nnn),AM(abs),AM(abs),AM(nnn),
 /* 1 */     AM(rel),AM(iny),AM(nnn),AM(nnn),AM(nnn),AM(zpx),AM(zpx),AM(nnn),AM(imp),AM(aby),AM(nnn),AM(nnn),AM(nnn),AM(abx),AM(abx),AM(nnn),
 /* 2 */     AM(abs),AM(xin),AM(nnn),AM(nnn),AM(zpg),AM(zpg),AM(zpg),AM(nnn),AM(imp),AM(imm),AM(acc),AM(nnn),AM(abs),AM(abs),AM(abs),AM(nnn),

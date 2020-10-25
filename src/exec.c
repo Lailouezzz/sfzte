@@ -20,9 +20,9 @@
 #include "exec.h"
 
 
-void reset(sfzt_ctx_s *ctx)
+void sfzt_reset(sfzt_ctx_s *ctx)
 {
-    REGPC = CREATE_WORD(READ8(0xFFFE), READ8(0xFFFF));
+    REGPC = 0x400;//CREATE_WORD(READ8(0xFFFE), READ8(0xFFFF));
     REGA = 0;
     REGX = 0;
     REGY = 0;
@@ -30,13 +30,20 @@ void reset(sfzt_ctx_s *ctx)
     SET_CONSTANT(*ctx);
 }
 
-void run(sfzt_ctx_s *ctx)
+void sfzt_run(sfzt_ctx_s *ctx)
 {
-    while(1)
+    //while(1)
     {
+        printf("0x%04x : ", REGPC);
         BYTE op = READ8(REGPC++);
+        printf("0x%02x 0x%02x 0x%02x : ", op, READ8(REGPC), READ8(REGPC + 1));
         SET_CONSTANT(*ctx);
 
-        (*opcode_table[op])(ctx, (*am_table[op])(ctx));
+        sfzt_addr ea = (*am_table[op])(ctx);
+        (*opcode_table[op])(ctx, ea);
+        printf(" = ");
+        printf("ACC : 0x%02x | X : 0x%02x | Y : 0x%02x | PC : 0x%04x | SP : 0x%02x | EA : 0x%04x | (EA) : 0x%02x\n", REGA, REGX, REGY, REGPC, REGSP, ea, READ8(ea));
+        printf("\n");
+
     }
 }

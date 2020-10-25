@@ -19,15 +19,17 @@
  * ************************************************************************** */
 #ifndef H_EXEC
 #define H_EXEC
+#include <stdlib.h>
+#include <stdio.h>
 #include "addr_mode.h"
 #include "opcode.h"
 #include "sfzt_context.h"
 #include "util.h"
 
 
-void reset(sfzt_ctx_s *ctx);
+void sfzt_reset(sfzt_ctx_s *ctx);
 
-void run(sfzt_ctx_s *ctx);
+void sfzt_run(sfzt_ctx_s *ctx);
 
 
 #endif /// #ifndef H_EXEC
