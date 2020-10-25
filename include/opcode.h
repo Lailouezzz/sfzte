@@ -22,10 +22,10 @@
 #include "sfzt_context.h"
 #include "util.h"
 #define DECL_OPCODE(OPCODE, CYCLE) void opcode_##OPCODE(sfzt_ctx_s *ctx, \
-                                                        sfzt_addr ea); \
-                            uint8_t opcode_cycle_##OPCODE = CYCLE
+                                                        sfzt_addr ea)/*; \
+                            static uint8_t opcode_cycle_##OPCODE = CYCLE*/
 #define IMP_OPCODE(OPCODE) void opcode_##OPCODE(sfzt_ctx_s *ctx, sfzt_addr ea)
-
+#define OP(OPCODE) opcode_##OPCODE
 
 void push_byte(BYTE b, sfzt_ctx_s *ctx);
 void push_word(WORD w, sfzt_ctx_s *ctx);
@@ -38,7 +38,7 @@ typedef void (*opcode)(sfzt_ctx_s *, sfzt_addr);
 DECL_OPCODE(adc, 0); // Add Memory to Accumulator with Carry
 DECL_OPCODE(and, 0); // AND Memory with Accumulator
 DECL_OPCODE(asl, 0); // Shift Left One Bit (Memory)
-DECL_OPCODE(asla, 0);// Shift Left One Bit (Accumulator)
+DECL_OPCODE(asla,0); // Shift Left One Bit (Accumulator)
 DECL_OPCODE(bcc, 0); // Branch on Carry Clear
 DECL_OPCODE(bcs, 0); // Branch on Carry Set
 DECL_OPCODE(beq, 0); // Branch on Result Zero
@@ -69,7 +69,7 @@ DECL_OPCODE(lda, 0); // Load Accumulator with Memory
 DECL_OPCODE(ldx, 0); // Load Index X with Memory
 DECL_OPCODE(ldy, 0); // Load Index Y with Memory
 DECL_OPCODE(lsr, 0); // Shift One Bit Right (Memory)
-DECL_OPCODE(lsra, 0);// Shift One Bit Right (Accumulator)
+DECL_OPCODE(lsra,0); // Shift One Bit Right (Accumulator)
 DECL_OPCODE(nop, 0); // No Operation
 DECL_OPCODE(ora, 0); // OR Memory with Accumulator
 DECL_OPCODE(pha, 0); // Push Accumulator on Stack
@@ -77,9 +77,9 @@ DECL_OPCODE(php, 0); // Push Processor Status on Stack
 DECL_OPCODE(pla, 0); // Pull Accumulator from Stack
 DECL_OPCODE(plp, 0); // Pull Processor Status from Stack
 DECL_OPCODE(rol, 0); // Rotate One Bit Left (Memory)
-DECL_OPCODE(rola, 0);// Rotate One Bit Left (Accumulator)
+DECL_OPCODE(rola,0); // Rotate One Bit Left (Accumulator)
 DECL_OPCODE(ror, 0); // Rotate One Bit Right (Memory)
-DECL_OPCODE(rora, 0);// Rotate One Bit Right (Accumulator)
+DECL_OPCODE(rora,0); // Rotate One Bit Right (Accumulator)
 DECL_OPCODE(rti, 0); // Return from Interrupt
 DECL_OPCODE(rts, 0); // Return from Subroutine
 DECL_OPCODE(sbc, 0); // Subtract Memory from Accumulator with Borrow
@@ -95,6 +95,26 @@ DECL_OPCODE(tsx, 0); // Transfer Stack Pointer to Index X
 DECL_OPCODE(txa, 0); // Transfer Index X to Accumulator
 DECL_OPCODE(txs, 0); // Transfer Index X to Stack Register
 DECL_OPCODE(tya, 0); // Transfer Index Y to Accumulator
+
+static const opcode opcode_table[256] = {
+        /*  0       1       2       3       4       5       6       7       8       9       A       B       C       D       E       F*/
+/* 0 */ OP(brk),OP(ora),OP(nop),OP(nop),OP(nop),OP(ora),OP(asl),OP(nop),OP(php),OP(ora),OP(asla),OP(nop),OP(nop),OP(ora),OP(asl),OP(nop),
+/* 1 */ OP(bpl),OP(ora),OP(nop),OP(nop),OP(nop),OP(ora),OP(asl),OP(nop),OP(clc),OP(ora),OP(nop),OP(nop),OP(nop),OP(ora),OP(asl),OP(nop),
+/* 2 */ OP(jsr),OP(and),OP(nop),OP(nop),OP(bit),OP(and),OP(rol),OP(nop),OP(plp),OP(and),OP(rola),OP(nop),OP(bit),OP(and),OP(rol),OP(nop),
+/* 3 */ OP(bmi),OP(and),OP(nop),OP(nop),OP(nop),OP(and),OP(rol),OP(nop),OP(sec),OP(and),OP(nop),OP(nop),OP(nop),OP(and),OP(rol),OP(nop),
+/* 4 */ OP(rti),OP(eor),OP(nop),OP(nop),OP(nop),OP(eor),OP(lsr),OP(nop),OP(pha),OP(eor),OP(lsra),OP(nop),OP(jmp),OP(eor),OP(lsr),OP(nop),
+/* 5 */ OP(bvc),OP(eor),OP(nop),OP(nop),OP(nop),OP(eor),OP(lsr),OP(nop),OP(cli),OP(eor),OP(nop),OP(nop),OP(nop),OP(eor),OP(lsr),OP(nop),
+/* 6 */ OP(rts),OP(adc),OP(nop),OP(nop),OP(nop),OP(adc),OP(ror),OP(nop),OP(pla),OP(adc),OP(rora),OP(nop),OP(jmp),OP(adc),OP(ror),OP(nop),
+/* 7 */ OP(bvs),OP(adc),OP(nop),OP(nop),OP(nop),OP(adc),OP(ror),OP(nop),OP(sei),OP(adc),OP(nop),OP(nop),OP(nop),OP(adc),OP(ror),OP(nop),
+/* 8 */ OP(nop),OP(sta),OP(nop),OP(nop),OP(sty),OP(sta),OP(stx),OP(nop),OP(dey),OP(nop),OP(txa),OP(nop),OP(sty),OP(sta),OP(stx),OP(nop),
+/* 9 */ OP(bcc),OP(sta),OP(nop),OP(nop),OP(sty),OP(sta),OP(stx),OP(nop),OP(tya),OP(sta),OP(txs),OP(nop),OP(nop),OP(sta),OP(nop),OP(nop),
+/* A */ OP(ldy),OP(lda),OP(ldx),OP(nop),OP(ldy),OP(lda),OP(ldx),OP(nop),OP(tay),OP(lda),OP(tax),OP(nop),OP(ldy),OP(lda),OP(ldx),OP(nop),
+/* B */ OP(bcs),OP(lda),OP(nop),OP(nop),OP(ldy),OP(lda),OP(ldx),OP(nop),OP(clv),OP(lda),OP(tsx),OP(nop),OP(ldy),OP(lda),OP(ldx),OP(nop),
+/* C */ OP(cpy),OP(cmp),OP(nop),OP(nop),OP(cpy),OP(cmp),OP(dec),OP(nop),OP(iny),OP(cmp),OP(dex),OP(nop),OP(cpy),OP(cmp),OP(dec),OP(nop),
+/* D */ OP(bne),OP(cmp),OP(nop),OP(nop),OP(nop),OP(cmp),OP(dec),OP(nop),OP(cld),OP(cmp),OP(nop),OP(nop),OP(nop),OP(cmp),OP(dec),OP(nop),
+/* E */ OP(cpx),OP(sbc),OP(nop),OP(nop),OP(cpx),OP(sbc),OP(inc),OP(nop),OP(inx),OP(sbc),OP(nop),OP(nop),OP(cpx),OP(sbc),OP(inc),OP(nop),
+/* F */ OP(beq),OP(sbc),OP(nop),OP(nop),OP(nop),OP(sbc),OP(inc),OP(nop),OP(sed),OP(sbc),OP(nop),OP(nop),OP(nop),OP(sbc),OP(inc),OP(nop),
+};
 
 
 #endif /// #ifndef H_OPCODE

@@ -21,7 +21,9 @@
 # define H_SFZTE
 
 # include "sfzt_context.h"
-# include "addr_modes.h"
+# include "addr_mode.h"
+# include "opcode.h"
+# include "exec.h"
 # include "util.h"
 
 #endif /// #ifndef H_SFZTE

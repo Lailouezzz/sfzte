@@ -50,11 +50,13 @@
 void push_byte(BYTE b, sfzt_ctx_s *ctx)
 {
     WRITE8(b, STACK_ADDR + REGSP--);
+    return;
 }
 void push_word(WORD w, sfzt_ctx_s *ctx)
 {
     push_byte((BYTE) (w >> 8) & 0x00FF, ctx);
     push_byte((BYTE) w & 0x00FF, ctx);
+    return;
 }
 
 BYTE pull_byte(sfzt_ctx_s *ctx)
@@ -169,7 +171,12 @@ IMP_OPCODE(bpl)
 IMP_OPCODE(brk)
 {
     UNUSED(ea);
+    REGPC++;
     push_word(REGPC, ctx);
+    push_byte(REGSR | FLAG_BREAK, ctx);
+    SET_INTERRUPT(*ctx);
+    REGPC = CREATE_WORD(READ8(0xFFFE), READ8(0xFFFF));
+    return;
 }
 IMP_OPCODE(bvc)
 {

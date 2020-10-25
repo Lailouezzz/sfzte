@@ -21,7 +21,7 @@
 #define H_UTIL
 #include <stdint.h>
 #define UNUSED(x) (void)(x)
-#define CREATE_WORD(LL, HH) (WORD)((LL) + ((WORD)(HH) << 8))
+#define CREATE_WORD(LL, HH) (WORD) ((LL) + ((WORD)(HH) << 8))
 
 
 typedef uint8_t BYTE;

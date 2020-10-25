@@ -17,12 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * ************************************************************************** */
-#include "addr_modes.h"
-#define CTX_READ(addr) (ctx->read(addr))
+#include "addr_mode.h"
+#define READ8(addr) (ctx->read(addr))
 #define OP_LO_BYTE_ADDR (ctx->pc)
 #define OP_HI_BYTE_ADDR (ctx->pc+1)
-#define OP_LO_BYTE (CTX_READ(OP_LO_BYTE_ADDR))
-#define OP_HI_BYTE (CTX_READ(OP_HI_BYTE_ADDR))
+#define OP_LO_BYTE (READ8(OP_LO_BYTE_ADDR))
+#define OP_HI_BYTE (READ8(OP_HI_BYTE_ADDR))
 #define REGPC (ctx->pc)
 #define REGX (ctx->x)
 #define REGY (ctx->y)
@@ -53,20 +53,20 @@ DECL_AM(imm)
 DECL_AM(ind)
 {
     sfzt_addr ea = addr_abs(ctx);
-    ea = (sfzt_addr) CREATE_WORD(CTX_READ(ea), CTX_READ(ea+1));
+    ea = (sfzt_addr) CREATE_WORD(READ8(ea), READ8(ea+1));
     return ea;
 }
 DECL_AM(xind)
 {
     sfzt_addr ea = (OP_LO_BYTE + REGX) & 0x00FF;
-    ea = (sfzt_addr) CREATE_WORD(CTX_READ(ea), CTX_READ(ea+1));
+    ea = (sfzt_addr) CREATE_WORD(READ8(ea), READ8(ea+1));
     ctx->pc += 1;
     return ea;
 }
 DECL_AM(indy)
 {
-    sfzt_addr ea = CTX_READ(ctx->pc);
-    ea = (sfzt_addr) CREATE_WORD(CTX_READ(ea), CTX_READ(ea+1)) + REGY;
+    sfzt_addr ea = READ8(ctx->pc);
+    ea = (sfzt_addr) CREATE_WORD(READ8(ea), READ8(ea+1)) + REGY;
     ctx->pc += 1;
     return ea;
 }

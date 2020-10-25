@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * addr_modes.h -- All address mode fonction for 6502
+ * addr_modes.h -- All necessary for run 6502 emulation
  *
  * Copyright (C) 2020 Lailouezzz <alanlebouder@gmail.com>
  *
@@ -17,30 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * ************************************************************************** */
-#ifndef H_ADDR_MODE
-#define H_ADDR_MODE
+#ifndef H_EXEC
+#define H_EXEC
+#include "addr_mode.h"
+#include "opcode.h"
 #include "sfzt_context.h"
 #include "util.h"
-#define DECL_AM(am) sfzt_addr addr_##am(sfzt_ctx_s *ctx)
 
 
-typedef sfzt_addr (*addr_mode)(sfzt_ctx_s *);
-
-DECL_AM(abs);
-DECL_AM(absx);
-DECL_AM(absy);
-
-DECL_AM(imm);
-
-DECL_AM(ind);
-DECL_AM(xind);
-DECL_AM(indy);
-
-DECL_AM(rel);
-
-DECL_AM(zpg);
-DECL_AM(zpgx);
-DECL_AM(zpgy);
 
 
-#endif /// #ifndef H_ADDR_MODE
+
+#endif /// #ifndef H_EXEC
