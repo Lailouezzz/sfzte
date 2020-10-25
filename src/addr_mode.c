@@ -18,29 +18,34 @@
  *
  * ************************************************************************** */
 #include "addr_mode.h"
-#define READ8(addr) (ctx->read(addr))
 #define OP_LO_BYTE_ADDR (ctx->pc)
 #define OP_HI_BYTE_ADDR (ctx->pc+1)
 #define OP_LO_BYTE (READ8(OP_LO_BYTE_ADDR))
 #define OP_HI_BYTE (READ8(OP_HI_BYTE_ADDR))
-#define REGPC (ctx->pc)
-#define REGX (ctx->x)
-#define REGY (ctx->y)
 
 
 // REGPC is positionned after the opcode so first byte is at REGPC
 
+DECL_AM(nnn)
+{
+    UNUSED(ctx);
+    return 0;
+}
+DECL_AM(acc)
+{
+    return AM(nnn)(ctx);
+}
 DECL_AM(abs)
 {
     sfzt_addr ea = (sfzt_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE);
     ctx->pc += 2;
     return ea;
 }
-DECL_AM(absx)
+DECL_AM(abx)
 {
     return addr_abs(ctx) + REGX;
 }
-DECL_AM(absy)
+DECL_AM(aby)
 {
     return addr_abs(ctx) + REGY;
 }
@@ -50,20 +55,24 @@ DECL_AM(imm)
     ctx->pc += 1;
     return ea;
 }
+DECL_AM(imp)
+{
+    return AM(nnn)(ctx);
+}
 DECL_AM(ind)
 {
     sfzt_addr ea = addr_abs(ctx);
     ea = (sfzt_addr) CREATE_WORD(READ8(ea), READ8(ea+1));
     return ea;
 }
-DECL_AM(xind)
+DECL_AM(xin)
 {
     sfzt_addr ea = (OP_LO_BYTE + REGX) & 0x00FF;
     ea = (sfzt_addr) CREATE_WORD(READ8(ea), READ8(ea+1));
     ctx->pc += 1;
     return ea;
 }
-DECL_AM(indy)
+DECL_AM(iny)
 {
     sfzt_addr ea = READ8(ctx->pc);
     ea = (sfzt_addr) CREATE_WORD(READ8(ea), READ8(ea+1)) + REGY;
@@ -82,12 +91,12 @@ DECL_AM(zpg)
     ctx->pc += 1;
     return ea;
 }
-DECL_AM(zpgx)
+DECL_AM(zpx)
 {
     sfzt_addr ea = (sfzt_addr) ((addr_zpg(ctx) + REGX) & 0x00FF);
     return ea;
 }
-DECL_AM(zpgy)
+DECL_AM(zpy)
 {
     sfzt_addr ea = (sfzt_addr) ((addr_zpg(ctx) + REGY) & 0x00FF);
     return ea;

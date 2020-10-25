@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * exec.h -- All necessary for run 6502 emulation
+ * exec.c -- All necessary for run 6502 emulation
  *
  * Copyright (C) 2020 Lailouezzz <alanlebouder@gmail.com>
  *
@@ -17,15 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * ************************************************************************** */
-#ifndef H_EXEC
-#define H_EXEC
-#include "addr_mode.h"
-#include "opcode.h"
-#include "sfzt_context.h"
-#include "util.h"
+#include "exec.h"
 
 
-void run(sfzt_ctx_s *ctx);
+void reset(sfzt_ctx_s *ctx)
+{
+    REGPC = CREATE_WORD(READ8(0xFFFE), READ8(0xFFFF));
+    REGA = 0;
+    REGX = 0;
+    REGY = 0;
+    REGSP = 0xFD;
+    SET_CONSTANT(*ctx);
+}
 
+void run(sfzt_ctx_s *ctx)
+{
+    while(1)
+    {
+        BYTE op = READ8(REGPC++);
+        SET_CONSTANT(*ctx);
 
-#endif /// #ifndef H_EXEC
+        (*opcode_table[op])(ctx, (*am_table[op])(ctx));
+    }
+}

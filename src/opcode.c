@@ -18,21 +18,6 @@
  *
  * ************************************************************************** */
 #include "opcode.h"
-#define READ8(addr) (ctx->read((addr)))
-#define WRITE8(b, addr) (ctx->write((b), (addr)))
-#define READ8_EA READ8(ea)
-#define WRITE8_EA(b) WRITE8(b, ea)
-#define REGA (ctx->a)
-#define REGX (ctx->x)
-#define REGY (ctx->y)
-#define REGPC (ctx->pc)
-#define REGSP (ctx->sp)
-#define REGSR (ctx->sr)
-
-
-#define PULL_BYTE 
-
-#define PULL_WORD 
 
 #define CALC_CARRY(r)       if((r & 0xFF00) != 0) SET_CARRY(*ctx); \
                                              else CLEAR_CARRY(*ctx);
