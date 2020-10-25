@@ -25,6 +25,8 @@
 #include "util.h"
 
 
+void reset(sfzt_ctx_s *ctx);
+
 void run(sfzt_ctx_s *ctx);
 
 
