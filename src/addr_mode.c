@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * ************************************************************************** */
-#include "addr_mode.h"
+#include "sfzte.h"
 #define OP_LO_BYTE_ADDR (ctx->pc)
 #define OP_HI_BYTE_ADDR (ctx->pc+1)
 #define OP_LO_BYTE (READ8(OP_LO_BYTE_ADDR))

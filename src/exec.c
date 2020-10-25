@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * ************************************************************************** */
-#include "exec.h"
+#include "sfzte.h"
 
 
 void sfzt_reset(sfzt_ctx_s *ctx)

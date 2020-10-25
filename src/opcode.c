@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * ************************************************************************** */
-#include "opcode.h"
+#include "sfzte.h"
 
 #define CALC_CARRY(r)       if((r & 0xFF00) != 0) SET_CARRY(*ctx); \
                                              else CLEAR_CARRY(*ctx);
