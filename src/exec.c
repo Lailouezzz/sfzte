@@ -22,7 +22,7 @@
 
 void sfzt_reset(sfzt_ctx_s *ctx)
 {
-    REGPC = 0x400;//CREATE_WORD(READ8(0xFFFE), READ8(0xFFFF));
+    REGPC = CREATE_WORD(READ8(0xFFFC), READ8(0xFFFD));
     REGA = 0;
     REGX = 0;
     REGY = 0;
@@ -30,20 +30,21 @@ void sfzt_reset(sfzt_ctx_s *ctx)
     SET_CONSTANT(*ctx);
 }
 
-void sfzt_run(sfzt_ctx_s *ctx)
+void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
 {
-    //while(1)
+    for(size_t i = 0; i < n; i++)
     {
-        printf("0x%04x : ", REGPC);
+        // Fetch
         BYTE op = READ8(REGPC++);
-        printf("0x%02x 0x%02x 0x%02x : ", op, READ8(REGPC), READ8(REGPC + 1));
         SET_CONSTANT(*ctx);
 
+        // Resolve ea
         sfzt_addr ea = (*am_table[op])(ctx);
-        (*opcode_table[op])(ctx, ea);
-        printf(" = ");
-        printf("ACC : 0x%02x | X : 0x%02x | Y : 0x%02x | PC : 0x%04x | SP : 0x%02x | EA : 0x%04x | (EA) : 0x%02x\n", REGA, REGX, REGY, REGPC, REGSP, ea, READ8(ea));
-        printf("\n");
 
+        // Execute opcode
+        (*opcode_table[op])(ctx, ea);
+
+        if(cb != NULL)
+            cb(ea, op, ctx);
     }
 }

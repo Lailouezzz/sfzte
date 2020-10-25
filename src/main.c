@@ -40,8 +40,7 @@ int main(int argc, char *argv[])
     ctx.write = sfzte_data_write;
 
     sfzt_reset(&ctx);
-    for(int i = 0; i < 25000; i++)
-        sfzt_run(&ctx);
+    sfzt_run(25, &ctx, NULL);
 
     fclose(fp);
     return EXIT_SUCCESS;
