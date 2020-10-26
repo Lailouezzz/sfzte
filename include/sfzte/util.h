@@ -19,6 +19,9 @@
  * ************************************************************************** */
 #ifndef H_UTIL
 #define H_UTIL
+#include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
 #include <stdint.h>
 #define UNUSED(x) (void)(x)
 #define CREATE_WORD(LL, HH) (WORD) ((LL) + ((WORD)(HH) << 8))

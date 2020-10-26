@@ -35,7 +35,7 @@ void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
     for(size_t i = 0; i < n; i++)
     {
         // Fetch
-        BYTE op = READ8(REGPC);
+        BYTE op = CURRENT_OP;
         SET_CONSTANT(*ctx);
 
         // Resolve ea
@@ -43,7 +43,8 @@ void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
 
         // Call callback after execute opcode
         if(cb != NULL)
-            cb(opsize, ctx);
+            if(cb(opsize, ctx) != 1)
+                break;
 
         // Execute opcode
         (*opcode_table[op])(ctx, opsize);

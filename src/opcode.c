@@ -19,15 +19,22 @@
  * ************************************************************************** */
 #include "sfzte.h"
 
-#define CALC_CARRY(r)       if((r & 0xFF00) != 0) SET_CARRY(*ctx); \
-                                             else CLEAR_CARRY(*ctx);
+#define CALC_CARRY(r)       if(r >> 8) SET_CARRY(*ctx); \
+                                  else CLEAR_CARRY(*ctx);
+
+#define CALC_NOTCARRY(r)       if(!(r >> 8)) SET_CARRY(*ctx); \
+                                        else CLEAR_CARRY(*ctx);
+
 #define CALC_ZERO(r)        if((r & 0x00FF) == 0) SET_ZERO(*ctx); \
                                              else CLEAR_ZERO(*ctx);
+
 #define CALC_OVERFLOW(r, m, n)    if((((r ^ n) & (r ^ m)) \
                                     & 0x80) != 0) SET_OVERFLOW(*ctx); \
                                              else CLEAR_OVERFLOW(*ctx);
-#define CALC_NEGATIVE(r)    if((r & 0x0080) != 0) SET_NEGATIVE(*ctx); \
+
+#define CALC_NEGATIVE(r)    if((r & 0x80) != 0) SET_NEGATIVE(*ctx); \
                                              else CLEAR_NEGATIVE(*ctx);
+
 #define NEXTINSTR() REGPC += opsize
 
 
@@ -60,10 +67,23 @@ IMPL_OPCODE(adc)
 {
     BYTE value = READ8_EA;
     WORD result = (WORD) (REGA + value + (IS_CARRY(*ctx) ? 1u : 0u));
+
+    if(IS_DECIMAL(*ctx))
+    {
+        if((REGA & 0x0F) + (value & 0x0F) + (IS_CARRY(*ctx) ? 1u : 0u) > 0x09)
+        {
+            result += 0x06;
+        }
+        if(result > 0x99)
+        {
+            result += 0x60;
+        }
+    }
     CALC_CARRY(result);
     CALC_ZERO(result);
     CALC_OVERFLOW(result, value, REGA);
     CALC_NEGATIVE(result);
+
     REGA = (BYTE)result;
     NEXTINSTR();
     return;
@@ -451,6 +471,8 @@ IMPL_OPCODE(php)
 IMPL_OPCODE(pla)
 {
     REGA = pull_byte(ctx);
+    CALC_NEGATIVE(REGA);
+    CALC_ZERO(REGA);
     NEXTINSTR();
     return;
 }
@@ -530,13 +552,24 @@ IMPL_OPCODE(rts)
 }
 IMPL_OPCODE(sbc)
 {
-    BYTE value = ~READ8_EA;
-    WORD result = (WORD) (REGA + value + (IS_CARRY(*ctx) ? 1u : 0u));
+    BYTE value = READ8_EA;
+    WORD result = (WORD) (REGA - value - (IS_CARRY(*ctx) ? 0u : 1u));
 
-    CALC_NEGATIVE(result);
+    if(IS_DECIMAL(*ctx))
+    {
+        if((REGA & 0x0F) - (value & 0x0F) - (IS_CARRY(*ctx) ? 0u : 1u) > 0x09)
+        {
+            result -= 0x06;
+        }
+        if(result > 0x99)
+        {
+            result -= 0x60;
+        }
+    }
+    CALC_NOTCARRY(result);
     CALC_ZERO(result);
-    CALC_CARRY(result);
-    CALC_OVERFLOW(result, REGA, value);
+    CALC_OVERFLOW(REGA, value, result);
+    CALC_NEGATIVE(result);
 
     REGA = (BYTE) result;
     NEXTINSTR();

@@ -72,6 +72,7 @@
 #define WRITE8(b, addr) (ctx->write((b), (addr)))
 #define READ8_EA READ8(EA)
 #define WRITE8_EA(b) WRITE8(b, EA)
+#define CURRENT_OP READ8(REGPC)
 
 
 struct sfzt_ctx

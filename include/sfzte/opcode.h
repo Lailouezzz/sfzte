@@ -22,10 +22,13 @@
 #include "sfzt_context.h"
 #include "util.h"
 #define DECL_OPCODE(OPCODE, CYCLE) void opcode_##OPCODE(sfzt_ctx_s *ctx, \
-                                                        BYTE opsize) /*; \
-                            static uint8_t opcode_cycle_##OPCODE = CYCLE*/
+                                                        BYTE opsize)
+                        /*  static uint8_t opcode_cycle_##OPCODE = CYCLE */
 #define IMPL_OPCODE(OPCODE)void opcode_##OPCODE(sfzt_ctx_s *ctx, BYTE opsize)
 #define OP(OPCODE) opcode_##OPCODE
+// Stringify OPCODE
+#define SO(OPCODE) #OPCODE
+
 
 void push_byte(BYTE b, sfzt_ctx_s *ctx);
 void push_word(WORD w, sfzt_ctx_s *ctx);
@@ -114,6 +117,26 @@ static const opcode opcode_table[256] = {
 /* D */ OP(bne),OP(cmp),OP(nop),OP(nop),OP(nop),OP(cmp),OP(dec),OP(nop),OP(cld),OP(cmp),OP(nop),OP(nop),OP(nop),OP(cmp),OP(dec),OP(nop),
 /* E */ OP(cpx),OP(sbc),OP(nop),OP(nop),OP(cpx),OP(sbc),OP(inc),OP(nop),OP(inx),OP(sbc),OP(nop),OP(nop),OP(cpx),OP(sbc),OP(inc),OP(nop),
 /* F */ OP(beq),OP(sbc),OP(nop),OP(nop),OP(nop),OP(sbc),OP(inc),OP(nop),OP(sed),OP(sbc),OP(nop),OP(nop),OP(nop),OP(sbc),OP(inc),OP(nop),
+};
+
+static const char opcode_name_table[256][5] = {
+        /*  0       1       2       3       4       5       6       7       8       9       A       B       C       D       E       F*/
+/* 0 */ SO(brk),SO(ora),SO(nop),SO(nop),SO(nop),SO(ora),SO(asl),SO(nop),SO(php),SO(ora),SO(asla),SO(nop),SO(nop),SO(ora),SO(asl),SO(nop),
+/* 1 */ SO(bpl),SO(ora),SO(nop),SO(nop),SO(nop),SO(ora),SO(asl),SO(nop),SO(clc),SO(ora),SO(nop),SO(nop),SO(nop),SO(ora),SO(asl),SO(nop),
+/* 2 */ SO(jsr),SO(and),SO(nop),SO(nop),SO(bit),SO(and),SO(rol),SO(nop),SO(plp),SO(and),SO(rola),SO(nop),SO(bit),SO(and),SO(rol),SO(nop),
+/* 3 */ SO(bmi),SO(and),SO(nop),SO(nop),SO(nop),SO(and),SO(rol),SO(nop),SO(sec),SO(and),SO(nop),SO(nop),SO(nop),SO(and),SO(rol),SO(nop),
+/* 4 */ SO(rti),SO(eor),SO(nop),SO(nop),SO(nop),SO(eor),SO(lsr),SO(nop),SO(pha),SO(eor),SO(lsra),SO(nop),SO(jmp),SO(eor),SO(lsr),SO(nop),
+/* 5 */ SO(bvc),SO(eor),SO(nop),SO(nop),SO(nop),SO(eor),SO(lsr),SO(nop),SO(cli),SO(eor),SO(nop),SO(nop),SO(nop),SO(eor),SO(lsr),SO(nop),
+/* 6 */ SO(rts),SO(adc),SO(nop),SO(nop),SO(nop),SO(adc),SO(ror),SO(nop),SO(pla),SO(adc),SO(rora),SO(nop),SO(jmp),SO(adc),SO(ror),SO(nop),
+/* 7 */ SO(bvs),SO(adc),SO(nop),SO(nop),SO(nop),SO(adc),SO(ror),SO(nop),SO(sei),SO(adc),SO(nop),SO(nop),SO(nop),SO(adc),SO(ror),SO(nop),
+/* 8 */ SO(nop),SO(sta),SO(nop),SO(nop),SO(sty),SO(sta),SO(stx),SO(nop),SO(dey),SO(nop),SO(txa),SO(nop),SO(sty),SO(sta),SO(stx),SO(nop),
+/* 9 */ SO(bcc),SO(sta),SO(nop),SO(nop),SO(sty),SO(sta),SO(stx),SO(nop),SO(tya),SO(sta),SO(txs),SO(nop),SO(nop),SO(sta),SO(nop),SO(nop),
+/* A */ SO(ldy),SO(lda),SO(ldx),SO(nop),SO(ldy),SO(lda),SO(ldx),SO(nop),SO(tay),SO(lda),SO(tax),SO(nop),SO(ldy),SO(lda),SO(ldx),SO(nop),
+/* B */ SO(bcs),SO(lda),SO(nop),SO(nop),SO(ldy),SO(lda),SO(ldx),SO(nop),SO(clv),SO(lda),SO(tsx),SO(nop),SO(ldy),SO(lda),SO(ldx),SO(nop),
+/* C */ SO(cpy),SO(cmp),SO(nop),SO(nop),SO(cpy),SO(cmp),SO(dec),SO(nop),SO(iny),SO(cmp),SO(dex),SO(nop),SO(cpy),SO(cmp),SO(dec),SO(nop),
+/* D */ SO(bne),SO(cmp),SO(nop),SO(nop),SO(nop),SO(cmp),SO(dec),SO(nop),SO(cld),SO(cmp),SO(nop),SO(nop),SO(nop),SO(cmp),SO(dec),SO(nop),
+/* E */ SO(cpx),SO(sbc),SO(nop),SO(nop),SO(cpx),SO(sbc),SO(inc),SO(nop),SO(inx),SO(sbc),SO(nop),SO(nop),SO(cpx),SO(sbc),SO(inc),SO(nop),
+/* F */ SO(beq),SO(sbc),SO(nop),SO(nop),SO(nop),SO(sbc),SO(inc),SO(nop),SO(sed),SO(sbc),SO(nop),SO(nop),SO(nop),SO(sbc),SO(inc),SO(nop),
 };
 
 
