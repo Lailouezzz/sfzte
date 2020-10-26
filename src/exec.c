@@ -35,16 +35,17 @@ void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
     for(size_t i = 0; i < n; i++)
     {
         // Fetch
-        BYTE op = READ8(REGPC++);
+        BYTE op = READ8(REGPC);
         SET_CONSTANT(*ctx);
 
         // Resolve ea
-        sfzt_addr ea = (*am_table[op])(ctx);
+        BYTE opsize = (*am_table[op])(ctx);
+
+        // Call callback after execute opcode
+        if(cb != NULL)
+            cb(opsize, ctx);
 
         // Execute opcode
-        (*opcode_table[op])(ctx, ea);
-
-        if(cb != NULL)
-            cb(ea, op, ctx);
+        (*opcode_table[op])(ctx, opsize);
     }
 }

@@ -24,12 +24,13 @@
 
 #define STACK_ADDR      0x0100  
 
-#define REGA (ctx->a)
-#define REGX (ctx->x)
-#define REGY (ctx->y)
-#define REGPC (ctx->pc)
-#define REGSP (ctx->sp)
-#define REGSR (ctx->sr)
+#define EA      (ctx->ea)
+#define REGA    (ctx->a)
+#define REGX    (ctx->x)
+#define REGY    (ctx->y)
+#define REGPC   (ctx->pc)
+#define REGSP   (ctx->sp)
+#define REGSR   (ctx->sr)
 
 #define FLAG_NEGATIVE   (1 << 7)
 #define FLAG_OVERFLOW   (1 << 6)
@@ -45,7 +46,7 @@
 #define IS_INTERRUPT(ctx)   (((ctx).sr & FLAG_INTERRUPT) != 0)
 #define IS_DECIMAL(ctx)     (((ctx).sr & FLAG_DECIMAL) != 0)
 #define IS_BREAK(ctx)       (((ctx).sr & FLAG_BREAK) != 0)
-#define IS_CONSTANT(ctx)       (((ctx).sr & FLAG_CONSTANT) != 0)
+#define IS_CONSTANT(ctx)    (((ctx).sr & FLAG_CONSTANT) != 0)
 #define IS_OVERFLOW(ctx)    (((ctx).sr & FLAG_OVERFLOW) != 0)
 #define IS_NEGATIVE(ctx)    (((ctx).sr & FLAG_NEGATIVE) != 0)
 
@@ -54,7 +55,7 @@
 #define SET_INTERRUPT(ctx)  ((ctx).sr |= FLAG_INTERRUPT)
 #define SET_DECIMAL(ctx)    ((ctx).sr |= FLAG_DECIMAL)
 #define SET_BREAK(ctx)      ((ctx).sr |= FLAG_BREAK)
-#define SET_CONSTANT(ctx)      ((ctx).sr |= FLAG_CONSTANT)
+#define SET_CONSTANT(ctx)   ((ctx).sr |= FLAG_CONSTANT)
 #define SET_OVERFLOW(ctx)   ((ctx).sr |= FLAG_OVERFLOW)
 #define SET_NEGATIVE(ctx)   ((ctx).sr |= FLAG_NEGATIVE)
 
@@ -63,14 +64,14 @@
 #define CLEAR_INTERRUPT(ctx)    ((ctx).sr &= (BYTE)(~FLAG_INTERRUPT))
 #define CLEAR_DECIMAL(ctx)      ((ctx).sr &= (BYTE)(~FLAG_DECIMAL))
 #define CLEAR_BREAK(ctx)        ((ctx).sr &= (BYTE)(~FLAG_BREAK))
-#define CLEAR_CONSTANT(ctx)        ((ctx).sr &= (BYTE)(~FLAG_CONSTANT))
+#define CLEAR_CONSTANT(ctx)     ((ctx).sr &= (BYTE)(~FLAG_CONSTANT))
 #define CLEAR_OVERFLOW(ctx)     ((ctx).sr &= (BYTE)(~FLAG_OVERFLOW))
 #define CLEAR_NEGATIVE(ctx)     ((ctx).sr &= (BYTE)(~FLAG_NEGATIVE))
 
 #define READ8(addr) (ctx->read((addr)))
 #define WRITE8(b, addr) (ctx->write((b), (addr)))
-#define READ8_EA READ8(ea)
-#define WRITE8_EA(b) WRITE8(b, ea)
+#define READ8_EA READ8(EA)
+#define WRITE8_EA(b) WRITE8(b, EA)
 
 
 struct sfzt_ctx
@@ -79,6 +80,7 @@ struct sfzt_ctx
     bus_write write;
 
     sfzt_addr pc; // program counter
+    sfzt_addr ea; // effective address of current op
     BYTE a, x, y; // 3 registers
     // 8 N (negative) - 7 V (overflow)  - 6 ignored  - 5 B (break) 
     // 4 D (decimal)  - 3 I (interrupt) - 2 Z (zero) - 1 C (carry)

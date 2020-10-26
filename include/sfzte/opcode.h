@@ -22,9 +22,9 @@
 #include "sfzt_context.h"
 #include "util.h"
 #define DECL_OPCODE(OPCODE, CYCLE) void opcode_##OPCODE(sfzt_ctx_s *ctx, \
-                                                        sfzt_addr ea)/*; \
+                                                        BYTE opsize) /*; \
                             static uint8_t opcode_cycle_##OPCODE = CYCLE*/
-#define IMP_OPCODE(OPCODE) void opcode_##OPCODE(sfzt_ctx_s *ctx, sfzt_addr ea)
+#define IMPL_OPCODE(OPCODE)void opcode_##OPCODE(sfzt_ctx_s *ctx, BYTE opsize)
 #define OP(OPCODE) opcode_##OPCODE
 
 void push_byte(BYTE b, sfzt_ctx_s *ctx);
@@ -33,7 +33,7 @@ void push_word(WORD w, sfzt_ctx_s *ctx);
 BYTE pull_byte(sfzt_ctx_s *ctx);
 WORD pull_word(sfzt_ctx_s *ctx);
 
-typedef void (*opcode)(sfzt_ctx_s *, sfzt_addr);
+typedef void (*opcode)(sfzt_ctx_s *ctx, BYTE opsize);
 
 DECL_OPCODE(adc, 0); // Add Memory to Accumulator with Carry
 DECL_OPCODE(and, 0); // AND Memory with Accumulator

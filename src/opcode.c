@@ -28,6 +28,7 @@
                                              else CLEAR_OVERFLOW(*ctx);
 #define CALC_NEGATIVE(r)    if((r & 0x0080) != 0) SET_NEGATIVE(*ctx); \
                                              else CLEAR_NEGATIVE(*ctx);
+#define NEXTINSTR() REGPC += opsize
 
 
 // REGPC point to next opcode
@@ -55,7 +56,7 @@ WORD pull_word(sfzt_ctx_s *ctx)
     return CREATE_WORD(lo, hi);
 }
 
-IMP_OPCODE(adc)
+IMPL_OPCODE(adc)
 {
     BYTE value = READ8_EA;
     WORD result = (WORD) (REGA + value + (IS_CARRY(*ctx) ? 1u : 0u));
@@ -64,58 +65,74 @@ IMP_OPCODE(adc)
     CALC_OVERFLOW(result, value, REGA);
     CALC_NEGATIVE(result);
     REGA = (BYTE)result;
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(and)
+IMPL_OPCODE(and)
 {
     REGA &= READ8_EA;
     CALC_ZERO(REGA);
     CALC_NEGATIVE(REGA);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(asl)
+IMPL_OPCODE(asl)
 {
     WORD result = READ8_EA << 1;
     CALC_CARRY(result);
     CALC_ZERO(result);
     CALC_NEGATIVE(result);
     WRITE8_EA((BYTE)result);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(asla)
+IMPL_OPCODE(asla)
 {
     WORD result = READ8_EA << 1;
     CALC_CARRY(result);
     CALC_ZERO(result);
     CALC_NEGATIVE(result);
     REGA = (BYTE)result;
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(bcc)
+IMPL_OPCODE(bcc)
 {
     if(!IS_CARRY(*ctx))
     {
-        REGPC = ea;
+        REGPC = EA;
+    }
+    else
+    {
+        NEXTINSTR();
     }
     return;
 }
-IMP_OPCODE(bcs)
+IMPL_OPCODE(bcs)
 {
     if(IS_CARRY(*ctx))
     {
-        REGPC = ea;
+        REGPC = EA;
+    }
+    else
+    {
+        NEXTINSTR();
     }
     return;
 }
-IMP_OPCODE(beq)
+IMPL_OPCODE(beq)
 {
     if(IS_ZERO(*ctx))
     {
-        REGPC = ea;
+        REGPC = EA;
+    }
+    else
+    {
+        NEXTINSTR();
     }
     return;
 }
-IMP_OPCODE(bit)
+IMPL_OPCODE(bit)
 {
     BYTE value = READ8_EA;
     BYTE result = REGA & value;
@@ -127,83 +144,103 @@ IMP_OPCODE(bit)
     else
         CLEAR_OVERFLOW(*ctx);
 
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(bmi)
+IMPL_OPCODE(bmi)
 {
     if(IS_NEGATIVE(*ctx))
     {
-        REGPC = ea;
+        REGPC = EA;
+    }
+    else
+    {
+        NEXTINSTR();
     }
     return;
 }
-IMP_OPCODE(bne)
+IMPL_OPCODE(bne)
 {
     if(!IS_ZERO(*ctx))
     {
-        REGPC = ea;
+        REGPC = EA;
+    }
+    else
+    {
+        NEXTINSTR();
     }
     return;
 }
-IMP_OPCODE(bpl)
+IMPL_OPCODE(bpl)
 {
     if(!IS_NEGATIVE(*ctx))
     {
-        REGPC = ea;
+        REGPC = EA;
+    }
+    else
+    {
+        NEXTINSTR();
     }
     return;
 }
-IMP_OPCODE(brk)
+IMPL_OPCODE(brk)
 {
-    UNUSED(ea);
-    REGPC++;
-    push_word(REGPC, ctx);
+    UNUSED(opsize);
+    push_word(REGPC+2, ctx);
     push_byte(REGSR | FLAG_BREAK, ctx);
     SET_INTERRUPT(*ctx);
     REGPC = CREATE_WORD(READ8(0xFFFE), READ8(0xFFFF));
     return;
 }
-IMP_OPCODE(bvc)
+IMPL_OPCODE(bvc)
 {
     if(!IS_OVERFLOW(*ctx))
     {
-        REGPC = ea;
+        REGPC = EA;
+    }
+    else
+    {
+        NEXTINSTR();
     }
     return;
 }
-IMP_OPCODE(bvs)
+IMPL_OPCODE(bvs)
 {
     if(IS_OVERFLOW(*ctx))
     {
-        REGPC = ea;
+        REGPC = EA;
+    }
+    else
+    {
+        NEXTINSTR();
     }
     return;
 }
-IMP_OPCODE(clc)
+IMPL_OPCODE(clc)
 {
-    UNUSED(ea);
     CLEAR_CARRY(*ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(cld)
+IMPL_OPCODE(cld)
 {
-    UNUSED(ea);
     CLEAR_DECIMAL(*ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(cli)
+IMPL_OPCODE(cli)
 {
-    UNUSED(ea);
     CLEAR_INTERRUPT(*ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(clv)
+IMPL_OPCODE(clv)
 {
-    UNUSED(ea);
     CLEAR_OVERFLOW(*ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(cmp)
+IMPL_OPCODE(cmp)
 {
     BYTE value = READ8_EA;
     BYTE result = REGA - value;
@@ -219,9 +256,10 @@ IMP_OPCODE(cmp)
     else
         CLEAR_CARRY(*ctx);
     
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(cpx)
+IMPL_OPCODE(cpx)
 {
     BYTE value = READ8_EA;
     BYTE result = REGX - value;
@@ -237,9 +275,10 @@ IMP_OPCODE(cpx)
     else
         CLEAR_CARRY(*ctx);
     
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(cpy)
+IMPL_OPCODE(cpy)
 {
     BYTE value = READ8_EA;
     BYTE result = REGY - value;
@@ -255,97 +294,107 @@ IMP_OPCODE(cpy)
     else
         CLEAR_CARRY(*ctx);
     
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(dec)
+IMPL_OPCODE(dec)
 {
     BYTE value = READ8_EA;
     value--;
     CALC_NEGATIVE(value);
     CALC_ZERO(value);
     WRITE8_EA(value);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(dex)
+IMPL_OPCODE(dex)
 {
-    UNUSED(ea);
     REGX--;
     CALC_NEGATIVE(REGX);
     CALC_ZERO(REGX);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(dey)
+IMPL_OPCODE(dey)
 {
-    UNUSED(ea);
     REGY--;
     CALC_NEGATIVE(REGY);
     CALC_ZERO(REGY);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(eor)
+IMPL_OPCODE(eor)
 {
     REGA ^= READ8_EA;
     CALC_NEGATIVE(REGA);
     CALC_ZERO(REGA);
+    NEXTINSTR();
+    return;
 }
-IMP_OPCODE(inc)
+IMPL_OPCODE(inc)
 {
     BYTE value = READ8_EA;
     value++;
     CALC_NEGATIVE(value);
     CALC_ZERO(value);
     WRITE8_EA(value);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(inx)
+IMPL_OPCODE(inx)
 {
-    UNUSED(ea);
     REGX++;
     CALC_NEGATIVE(REGX);
     CALC_ZERO(REGX);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(iny)
+IMPL_OPCODE(iny)
 {
-    UNUSED(ea);
     REGY++;
     CALC_NEGATIVE(REGY);
     CALC_ZERO(REGY);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(jmp)
+IMPL_OPCODE(jmp)
 {
-    REGPC = ea;
+    UNUSED(opsize);
+    REGPC = EA;
     return;
 }
-IMP_OPCODE(jsr)
+IMPL_OPCODE(jsr)
 {
-    push_word(REGPC-1, ctx);
-    REGPC = ea;
+    UNUSED(opsize);
+    push_word(REGPC+2, ctx);
+    REGPC = EA;
     return;
 }
-IMP_OPCODE(lda)
+IMPL_OPCODE(lda)
 {
     REGA = READ8_EA;
     CALC_NEGATIVE(REGA);
     CALC_ZERO(REGA);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(ldx)
+IMPL_OPCODE(ldx)
 {
     REGX = READ8_EA;
     CALC_NEGATIVE(REGX);
     CALC_ZERO(REGX);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(ldy)
+IMPL_OPCODE(ldy)
 {
     REGY = READ8_EA;
     CALC_NEGATIVE(REGY);
     CALC_ZERO(REGY);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(lsr)
+IMPL_OPCODE(lsr)
 {
     BYTE value = READ8_EA;
     BYTE result = value >> 1;
@@ -356,11 +405,11 @@ IMP_OPCODE(lsr)
     CLEAR_NEGATIVE(*ctx);
     CALC_ZERO(result);
     WRITE8_EA(result);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(lsra)
+IMPL_OPCODE(lsra)
 {
-    UNUSED(ea);
     BYTE value = REGA;
     BYTE result = value >> 1;
     if((value & 1))
@@ -370,46 +419,48 @@ IMP_OPCODE(lsra)
     CLEAR_NEGATIVE(*ctx);
     CALC_ZERO(result);
     REGA = result;
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(nop)
+IMPL_OPCODE(nop)
 {
     UNUSED(ctx);
-    UNUSED(ea);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(ora)
+IMPL_OPCODE(ora)
 {
     REGA |= READ8_EA;
     CALC_NEGATIVE(REGA);
     CALC_ZERO(REGA);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(pha)
+IMPL_OPCODE(pha)
 {
-    UNUSED(ea);
     push_byte(REGA, ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(php)
+IMPL_OPCODE(php)
 {
-    UNUSED(ea);
-    push_byte(REGSR, ctx);
+    push_byte(REGSR | FLAG_BREAK, ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(pla)
+IMPL_OPCODE(pla)
 {
-    UNUSED(ea);
     REGA = pull_byte(ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(plp)
+IMPL_OPCODE(plp)
 {
-    UNUSED(ea);
-    REGSR = pull_byte(ctx);
+    REGSR = pull_byte(ctx) | FLAG_CONSTANT;
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(rol)
+IMPL_OPCODE(rol)
 {
     BYTE value = READ8_EA;
     WORD result = (WORD) ((value << 1) | (IS_CARRY(*ctx) ? 1u : 0u));
@@ -418,20 +469,21 @@ IMP_OPCODE(rol)
     CALC_ZERO(result);
     CALC_CARRY(result);
     WRITE8_EA((BYTE) result);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(rola)
+IMPL_OPCODE(rola)
 {
-    UNUSED(ea);
     WORD result = (WORD) ((REGA << 1) | (IS_CARRY(*ctx) ? 1u : 0u));
 
     CALC_NEGATIVE(result);
     CALC_ZERO(result);
     CALC_CARRY(result);
     REGA = (BYTE) result;
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(ror)
+IMPL_OPCODE(ror)
 {
     BYTE value = READ8_EA;
     WORD result = (WORD) ((value >> 1) | (IS_CARRY(*ctx) ? (1u << 7) : 0u));
@@ -444,11 +496,11 @@ IMP_OPCODE(ror)
         CLEAR_CARRY(*ctx);
     
     WRITE8_EA((BYTE) result);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(rora)
+IMPL_OPCODE(rora)
 {
-    UNUSED(ea);
     BYTE value = REGA;
     WORD result = (WORD) ((value >> 1) | (IS_CARRY(*ctx) ? (1u << 7) : 0u));
 
@@ -460,22 +512,23 @@ IMP_OPCODE(rora)
         CLEAR_CARRY(*ctx);
     
     REGA = (BYTE) result;
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(rti)
+IMPL_OPCODE(rti)
 {
-    UNUSED(ea);
+    UNUSED(opsize);
     REGSR = pull_byte(ctx);
     REGPC = pull_word(ctx);
     return;
 }
-IMP_OPCODE(rts)
+IMPL_OPCODE(rts)
 {
-    UNUSED(ea);
+    UNUSED(opsize);
     REGPC = pull_word(ctx) + 1;
     return;
 }
-IMP_OPCODE(sbc)
+IMPL_OPCODE(sbc)
 {
     BYTE value = ~READ8_EA;
     WORD result = (WORD) (REGA + value + (IS_CARRY(*ctx) ? 1u : 0u));
@@ -486,84 +539,88 @@ IMP_OPCODE(sbc)
     CALC_OVERFLOW(result, REGA, value);
 
     REGA = (BYTE) result;
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(sec)
+IMPL_OPCODE(sec)
 {
-    UNUSED(ea);
     SET_CARRY(*ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(sed)
+IMPL_OPCODE(sed)
 {
-    UNUSED(ea);
     SET_DECIMAL(*ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(sei)
+IMPL_OPCODE(sei)
 {
-    UNUSED(ea);
     SET_INTERRUPT(*ctx);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(sta)
+IMPL_OPCODE(sta)
 {
     WRITE8_EA(REGA);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(stx)
+IMPL_OPCODE(stx)
 {
     WRITE8_EA(REGX);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(sty)
+IMPL_OPCODE(sty)
 {
     WRITE8_EA(REGY);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(tax)
+IMPL_OPCODE(tax)
 {
-    UNUSED(ea);
     REGX = REGA;
     CALC_NEGATIVE(REGX);
     CALC_ZERO(REGX);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(tay)
+IMPL_OPCODE(tay)
 {
-    UNUSED(ea);
     REGY = REGA;
     CALC_NEGATIVE(REGY);
     CALC_ZERO(REGY);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(tsx)
+IMPL_OPCODE(tsx)
 {
-    UNUSED(ea);
     REGX = REGSP;
     CALC_NEGATIVE(REGX);
     CALC_ZERO(REGX);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(txa)
+IMPL_OPCODE(txa)
 {
-    UNUSED(ea);
     REGA = REGX;
     CALC_NEGATIVE(REGA);
     CALC_ZERO(REGA);
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(txs)
+IMPL_OPCODE(txs)
 {
-    UNUSED(ea);
     REGSP = REGX;
+    NEXTINSTR();
     return;
 }
-IMP_OPCODE(tya)
+IMPL_OPCODE(tya)
 {
-    UNUSED(ea);
     REGA = REGY;
     CALC_NEGATIVE(REGA);
     CALC_ZERO(REGA);
+    NEXTINSTR();
     return;
 }

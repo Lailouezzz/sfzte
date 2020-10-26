@@ -21,10 +21,11 @@
 #define H_ADDR_MODE
 #include "sfzt_context.h"
 #include "util.h"
-#define DECL_AM(am) sfzt_addr addr_##am(sfzt_ctx_s *ctx)
+#define DECL_AM(am) BYTE addr_##am(sfzt_ctx_s *ctx)
+#define IMPL_AM(am) BYTE addr_##am(sfzt_ctx_s *ctx)
 #define AM(am) (addr_##am)
 
-typedef sfzt_addr (*addr_mode)(sfzt_ctx_s *);
+typedef BYTE (*addr_mode)(sfzt_ctx_s *);
 
 DECL_AM(nnn);
 DECL_AM(acc);

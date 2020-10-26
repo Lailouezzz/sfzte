@@ -27,7 +27,7 @@
 #include "util.h"
 
 
-typedef void (*exec_cb)(sfzt_addr ea, BYTE op, sfzt_ctx_s *ctx);
+typedef void (*exec_cb)(BYTE opsize, sfzt_ctx_s *ctx);
 
 void sfzt_reset(sfzt_ctx_s *ctx);
 
