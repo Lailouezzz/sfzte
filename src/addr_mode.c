@@ -52,7 +52,7 @@ IMPL_AM(acc)
 IMPL_DAM(acc)
 {
     UNUSED(ctx);
-    return snprintf(dst, maxlen, "A (0x%02x)", REGA);
+    return snprintf(dst, maxlen, "A");
 }
 
 IMPL_AM(abs)
@@ -62,7 +62,6 @@ IMPL_AM(abs)
 }
 IMPL_DAM(abs)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "$%04x", CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE));
 }
 
@@ -73,7 +72,6 @@ IMPL_AM(abx)
 }
 IMPL_DAM(abx)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "$%04x, X", 
             CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE));
 }
@@ -85,7 +83,6 @@ IMPL_AM(aby)
 }
 IMPL_DAM(aby)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "$%04x, Y", 
             CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE));
 }
@@ -97,7 +94,6 @@ IMPL_AM(imm)
 }
 IMPL_DAM(imm)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "#%02x", OP_LO_BYTE);
 }
 
@@ -107,7 +103,6 @@ IMPL_AM(imp)
 }
 IMPL_DAM(imp)
 {
-    UNUSED(ctx);
     return DAM(nnn)(dst, maxlen, ctx);
 }
 
@@ -119,7 +114,6 @@ IMPL_AM(ind)
 }
 IMPL_DAM(ind)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "($%04x)", 
             CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE));
 }
@@ -132,7 +126,6 @@ IMPL_AM(xin)
 }
 IMPL_DAM(xin)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "($%02x, X)", OP_LO_BYTE);
 }
 
@@ -144,7 +137,6 @@ IMPL_AM(iny)
 }
 IMPL_DAM(iny)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "($%02x), Y", OP_LO_BYTE);
 }
 
@@ -155,7 +147,6 @@ IMPL_AM(rel)
 }
 IMPL_DAM(rel)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "$%04x", (REGPC+2) + (int8_t) OP_LO_BYTE);
 }
 
@@ -166,7 +157,6 @@ IMPL_AM(zpg)
 }
 IMPL_DAM(zpg)
 {
-    UNUSED(ctx);
     return snprintf(dst, maxlen, "$00%02x", OP_LO_BYTE);
 }
 
@@ -177,8 +167,7 @@ IMPL_AM(zpx)
 }
 IMPL_DAM(zpx)
 {
-    UNUSED(ctx);
-    return snprintf(dst, maxlen, "zpx");
+    return snprintf(dst, maxlen, "$%04x, X", OP_LO_BYTE);
 }
 
 IMPL_AM(zpy)
@@ -188,6 +177,5 @@ IMPL_AM(zpy)
 }
 IMPL_DAM(zpy)
 {
-    UNUSED(ctx);
-    return snprintf(dst, maxlen, "zpy");
+    return snprintf(dst, maxlen, "$%04x, Y", OP_LO_BYTE);
 }
