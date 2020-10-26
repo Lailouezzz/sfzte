@@ -27,6 +27,7 @@
 #include "util.h"
 
 
+// exec_cb can be used for manage some device 
 typedef BYTE (*exec_cb)(BYTE opsize, sfzt_ctx_s *ctx);
 
 void sfzt_reset(sfzt_ctx_s *ctx);

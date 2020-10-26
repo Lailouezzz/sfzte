@@ -41,7 +41,7 @@ void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
         // Resolve ea
         BYTE opsize = (*am_table[op])(ctx);
 
-        // Call callback after execute opcode
+        // Call callback before execute opcode
         if(cb != NULL)
             if(cb(opsize, ctx) != 1)
                 break;

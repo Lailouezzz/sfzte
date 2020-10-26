@@ -37,7 +37,7 @@ BYTE pull_byte(sfzt_ctx_s *ctx);
 WORD pull_word(sfzt_ctx_s *ctx);
 
 typedef void (*opcode)(sfzt_ctx_s *ctx, BYTE opsize);
-
+// TODO : implement cycle counter
 DECL_OPCODE(adc, 0); // Add Memory to Accumulator with Carry
 DECL_OPCODE(and, 0); // AND Memory with Accumulator
 DECL_OPCODE(asl, 0); // Shift Left One Bit (Memory)
