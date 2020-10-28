@@ -34,5 +34,9 @@ void sfzt_reset(sfzt_ctx_s *ctx);
 
 void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb);
 
+void sfzt_irq(sfzt_ctx_s *ctx);
+
+void sfzt_nmi(sfzt_ctx_s *ctx);
+
 
 #endif /// #ifndef H_EXEC

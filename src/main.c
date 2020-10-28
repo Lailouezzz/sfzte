@@ -5,6 +5,7 @@
 
 
 static BYTE sfzte_data[0x10000];
+static sfzt_ctx_s ctx;
 
 BYTE sfzte_data_read(sfzt_addr addr);
 void sfzte_data_write(BYTE v, sfzt_addr addr);
@@ -35,7 +36,6 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    sfzt_ctx_s ctx;
     memset(&ctx, 0, sizeof(ctx));
     ctx.read = sfzte_data_read;
     ctx.write = sfzte_data_write;
@@ -55,6 +55,14 @@ BYTE sfzte_data_read(sfzt_addr addr)
 }
 void sfzte_data_write(BYTE v, sfzt_addr addr)
 {
+    // Handle IRQ
+    if(addr == 0xbffc)
+    {
+        if (v & 0x01)
+        {
+            sfzt_irq(&ctx);
+        }
+    }
     sfzte_data[addr] = v;
 }
 
@@ -88,12 +96,14 @@ void sfzte_debug(BYTE opsize, sfzt_ctx_s *ctx)
     printf("X  : 0x%02x  |  ", REGX);
     printf("Y  : 0x%02x  |  ", REGY);
     printf("SP : 0x%02x  |  ", REGSP);
-    printf("(SP-1) : 0x%02x  |  ", READ8(REGSP-1));
+    printf("(SP+1) : 0x%02x  |  ", READ8((REGSP+1) + STACK_ADDR));
     printf("SR : ");
     for(BYTE i = 0x80; i != 0; i >>= 1)
     {
         printf((REGSR & i) ? "1" : "0");
     }
+    printf(" | IRQ : 0x%02x  |  ", READ8(0xbffc) & 0x01);
+    printf("NMI : 0x%02x", ((READ8(0xbffc) & 0x02) >> 1));
     printf("\n");
     return;
 }
@@ -118,5 +128,8 @@ BYTE sfzte_cb(BYTE opsize, sfzt_ctx_s *ctx)
         getchar();
         return 0;
     }
+
+    sfzte_debug(opsize, ctx);
+
     return 1;
 }

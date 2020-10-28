@@ -22,12 +22,14 @@
 
 void sfzt_reset(sfzt_ctx_s *ctx)
 {
-    REGPC = CREATE_WORD(READ8(0xFFFC), READ8(0xFFFD));
-    REGA = 0;
-    REGX = 0;
-    REGY = 0;
+    REGPC = CREATE_WORD(READ8(RSTVECTOR), READ8(RSTVECTOR+1));
+    REGA = 0x00;
+    REGX = 0x00;
+    REGY = 0x00;
     REGSP = 0xFD;
+    REGSR = 0x00;
     SET_CONSTANT(*ctx);
+    SET_INTERRUPT(*ctx);
 }
 
 void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
@@ -41,12 +43,35 @@ void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
         // Resolve ea
         BYTE opsize = (*am_table[op])(ctx);
 
+        // FIX me : cb can irq nmi etc ?
         // Call callback before execute opcode
         if(cb != NULL)
             if(cb(opsize, ctx) != 1)
                 break;
 
+        // FIX me : when REGPC is updated ?
         // Execute opcode
         (*opcode_table[op])(ctx, opsize);
     }
+}
+
+void sfzt_irq(sfzt_ctx_s *ctx)
+{
+    if(!IS_INTERRUPT(*ctx)) // If irq are not disabled
+    {
+        CLEAR_BREAK(*ctx);
+        push_word(REGPC, ctx);
+        push_byte(REGSR, ctx);
+        SET_INTERRUPT(*ctx);
+        REGPC = CREATE_WORD(READ8(IRQVECTOR), READ8(IRQVECTOR+1));
+    }
+}
+
+void sfzt_nmi(sfzt_ctx_s *ctx)
+{
+    CLEAR_BREAK(*ctx);
+    push_word(REGPC, ctx);
+    push_byte(REGSR, ctx);
+    SET_INTERRUPT(*ctx);
+    REGPC = CREATE_WORD(READ8(NMIVECTOR), READ8(NMIVECTOR+1));
 }

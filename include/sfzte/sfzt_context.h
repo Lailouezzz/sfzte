@@ -32,6 +32,10 @@
 #define REGSP   (ctx->sp)
 #define REGSR   (ctx->sr)
 
+#define IRQVECTOR   0xFFFE
+#define RSTVECTOR   0xFFFC
+#define NMIVECTOR   0xFFFA
+
 #define FLAG_NEGATIVE   (1 << 7)
 #define FLAG_OVERFLOW   (1 << 6)
 #define FLAG_CONSTANT   (1 << 5)
