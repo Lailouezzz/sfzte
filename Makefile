@@ -38,9 +38,13 @@ LDFLAGS :=
 
 all: $(EXEC_NAME)
 
-clean:
+mostlyclean:
 	@echo "Removing the build folder"
 	@rm -rf $(BUILD_DIR)
+
+
+clean: mostlyclean
+	@echo "Removing the output binary"
 	@rm -f $(EXEC_NAME)
 
 re: clean all
