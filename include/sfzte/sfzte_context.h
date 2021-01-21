@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * sfzt_context.h -- All necessary for 6502 status
+ * sfzte_context.h -- All necessary for 6502 status
  *
  * Copyright (C) 2020 Lailouezzz <alanlebouder@gmail.com>
  *
@@ -75,13 +75,13 @@
 #define CURRENT_OP READ8(REGPC)
 
 
-struct sfzt_ctx
+struct sfzte_ctx
 {
     bus_read read;
     bus_write write;
 
-    sfzt_addr pc; // program counter
-    sfzt_addr ea; // effective address of current op
+    sfzte_addr pc; // program counter
+    sfzte_addr ea; // effective address of current op
     BYTE a, x, y; // 3 registers
     // 8 N (negative) - 7 V (overflow)  - 6 ignored  - 5 B (break) 
     // 4 D (decimal)  - 3 I (interrupt) - 2 Z (zero) - 1 C (carry)
@@ -89,7 +89,7 @@ struct sfzt_ctx
     BYTE sp;
 };
 
-typedef struct sfzt_ctx sfzt_ctx_s; 
+typedef struct sfzte_ctx sfzte_ctx_s; 
 
 
 #endif /// #ifndef H_SFZT_CONTEXT

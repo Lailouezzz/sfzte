@@ -57,7 +57,7 @@ IMPL_DAM(acc)
 
 IMPL_AM(abs)
 {
-    EA = (sfzt_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE);
+    EA = (sfzte_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE);
     return 3;
 }
 IMPL_DAM(abs)
@@ -67,7 +67,7 @@ IMPL_DAM(abs)
 
 IMPL_AM(abx)
 {
-    EA = (sfzt_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE) + REGX;
+    EA = (sfzte_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE) + REGX;
     return 3;
 }
 IMPL_DAM(abx)
@@ -78,7 +78,7 @@ IMPL_DAM(abx)
 
 IMPL_AM(aby)
 {
-    EA = (sfzt_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE) + REGY;
+    EA = (sfzte_addr) CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE) + REGY;
     return 3;
 }
 IMPL_DAM(aby)
@@ -89,7 +89,7 @@ IMPL_DAM(aby)
 
 IMPL_AM(imm)
 {
-    EA = (sfzt_addr) OP_LO_BYTE_ADDR;
+    EA = (sfzte_addr) OP_LO_BYTE_ADDR;
     return 2;
 }
 IMPL_DAM(imm)
@@ -109,7 +109,7 @@ IMPL_DAM(imp)
 IMPL_AM(ind)
 {
     EA = CREATE_WORD(OP_LO_BYTE, OP_HI_BYTE);
-    EA = (sfzt_addr) CREATE_WORD(READ8(EA), READ8(EA+1));
+    EA = (sfzte_addr) CREATE_WORD(READ8(EA), READ8(EA+1));
     return 3;
 }
 IMPL_DAM(ind)
@@ -121,7 +121,7 @@ IMPL_DAM(ind)
 IMPL_AM(xin)
 {
     EA = (OP_LO_BYTE + REGX) & 0x00FF;
-    EA = (sfzt_addr) CREATE_WORD(READ8(EA), READ8(EA+1));
+    EA = (sfzte_addr) CREATE_WORD(READ8(EA), READ8(EA+1));
     return 2;
 }
 IMPL_DAM(xin)
@@ -132,7 +132,7 @@ IMPL_DAM(xin)
 IMPL_AM(iny)
 {
     EA = OP_LO_BYTE & 0x00FF;
-    EA = (sfzt_addr) CREATE_WORD(READ8(EA), READ8(EA+1)) + REGY;
+    EA = (sfzte_addr) CREATE_WORD(READ8(EA), READ8(EA+1)) + REGY;
     return 2;
 }
 IMPL_DAM(iny)
@@ -142,7 +142,7 @@ IMPL_DAM(iny)
 
 IMPL_AM(rel)
 {
-    EA = (sfzt_addr) ((REGPC+2) + (int8_t) OP_LO_BYTE);
+    EA = (sfzte_addr) ((REGPC+2) + (int8_t) OP_LO_BYTE);
     return 2;
 }
 IMPL_DAM(rel)
@@ -152,7 +152,7 @@ IMPL_DAM(rel)
 
 IMPL_AM(zpg)
 {
-    EA = (sfzt_addr) (OP_LO_BYTE & 0x00FF);
+    EA = (sfzte_addr) (OP_LO_BYTE & 0x00FF);
     return 2;
 }
 IMPL_DAM(zpg)
@@ -162,7 +162,7 @@ IMPL_DAM(zpg)
 
 IMPL_AM(zpx)
 {
-    EA = (sfzt_addr) ((OP_LO_BYTE & 0x00FF) + REGX) & 0x00FF;
+    EA = (sfzte_addr) ((OP_LO_BYTE & 0x00FF) + REGX) & 0x00FF;
     return 2;
 }
 IMPL_DAM(zpx)
@@ -172,7 +172,7 @@ IMPL_DAM(zpx)
 
 IMPL_AM(zpy)
 {
-    EA = (sfzt_addr) ((OP_LO_BYTE & 0x00FF) + REGY) & 0x00FF;
+    EA = (sfzte_addr) ((OP_LO_BYTE & 0x00FF) + REGY) & 0x00FF;
     return 2;
 }
 IMPL_DAM(zpy)

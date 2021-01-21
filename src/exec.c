@@ -20,7 +20,7 @@
 #include "sfzte.h"
 
 
-void sfzt_reset(sfzt_ctx_s *ctx)
+void sfzte_reset(sfzte_ctx_s *ctx)
 {
     REGPC = CREATE_WORD(READ8(0xFFFC), READ8(0xFFFD));
     REGA = 0;
@@ -30,9 +30,9 @@ void sfzt_reset(sfzt_ctx_s *ctx)
     SET_CONSTANT(*ctx);
 }
 
-void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
+void sfzte_run(size_t n, sfzte_ctx_s *ctx, exec_cb cb)
 {
-    for(size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; ++i)
     {
         // Fetch
         BYTE op = CURRENT_OP;
@@ -42,9 +42,18 @@ void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb)
         BYTE opsize = (*am_table[op])(ctx);
 
         // Call callback before execute opcode
-        if(cb != NULL)
-            if(cb(opsize, ctx) != 1)
+        if (cb != NULL)
+        {
+            BYTE ret = cb(opsize, ctx);
+            if (ret == SFZTE_CB_STOP)
+            {
                 break;
+            }
+            else if (ret == SFZTE_CB_SKIP)
+            {
+                continue;
+            }
+        }
 
         // Execute opcode
         (*opcode_table[op])(ctx, opsize);

@@ -6,10 +6,10 @@
 
 static BYTE sfzte_data[0x10000];
 
-BYTE sfzte_data_read(sfzt_addr addr);
-void sfzte_data_write(BYTE v, sfzt_addr addr);
-void sfzte_debug(BYTE opsize, sfzt_ctx_s *ctx);
-BYTE sfzte_cb(BYTE opsize, sfzt_ctx_s *ctx);
+BYTE sfzte_data_read(sfzte_addr addr);
+void sfzte_data_write(BYTE v, sfzte_addr addr);
+void sfzte_debug(BYTE opsize, sfzte_ctx_s *ctx);
+BYTE sfzte_cb(BYTE opsize, sfzte_ctx_s *ctx);
 
 int main(int argc, char *argv[])
 {
@@ -35,30 +35,30 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    sfzt_ctx_s ctx;
+    sfzte_ctx_s ctx;
     memset(&ctx, 0, sizeof(ctx));
     ctx.read = sfzte_data_read;
     ctx.write = sfzte_data_write;
 
-    sfzt_reset(&ctx);
+    sfzte_reset(&ctx);
     ctx.pc = 0x400;
-    sfzt_run(INT_FAST64_MAX, &ctx, sfzte_cb);
+    sfzte_run(INT_FAST64_MAX, &ctx, sfzte_cb);
     printf("Final : 0x%04x\n", ctx.pc);
 
     fclose(fp);
     return EXIT_SUCCESS;
 }
 
-BYTE sfzte_data_read(sfzt_addr addr)
+BYTE sfzte_data_read(sfzte_addr addr)
 {
     return sfzte_data[addr];
 }
-void sfzte_data_write(BYTE v, sfzt_addr addr)
+void sfzte_data_write(BYTE v, sfzte_addr addr)
 {
     sfzte_data[addr] = v;
 }
 
-void sfzte_debug(BYTE opsize, sfzt_ctx_s *ctx)
+void sfzte_debug(BYTE opsize, sfzte_ctx_s *ctx)
 {
     // Print data at PC
     printf("0x%04x : ", REGPC);
@@ -98,16 +98,16 @@ void sfzte_debug(BYTE opsize, sfzt_ctx_s *ctx)
     return;
 }
 
-BYTE sfzte_cb(BYTE opsize, sfzt_ctx_s *ctx)
+BYTE sfzte_cb(BYTE opsize, sfzte_ctx_s *ctx)
 {
     UNUSED(opsize);
     // Check if we are in a trap
-    static sfzt_addr lastpc = 0;
+    static sfzte_addr lastpc = 0;
     if(lastpc == REGPC)
     {
         printf("TRAP : 0x%04x", REGPC);
         getchar();
-        return 0;
+        return SFZTE_CB_STOP;
     }
     lastpc = REGPC;
 
@@ -116,7 +116,8 @@ BYTE sfzte_cb(BYTE opsize, sfzt_ctx_s *ctx)
     {
         printf("SUCCESS");
         getchar();
-        return 0;
+        return SFZTE_CB_STOP;
     }
-    return 1;
+    sfzte_debug(opsize, ctx);
+    return SFZTE_CB_OK;
 }

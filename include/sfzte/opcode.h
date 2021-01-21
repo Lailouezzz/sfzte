@@ -19,24 +19,24 @@
  * ************************************************************************** */
 #ifndef H_OPCODE
 #define H_OPCODE
-#include "sfzt_context.h"
+#include "sfzte_context.h"
 #include "util.h"
-#define DECL_OPCODE(OPCODE, CYCLE) void opcode_##OPCODE(sfzt_ctx_s *ctx, \
+#define DECL_OPCODE(OPCODE, CYCLE) void opcode_##OPCODE(sfzte_ctx_s *ctx, \
                                                         BYTE opsize)
                         /*  static uint8_t opcode_cycle_##OPCODE = CYCLE */
-#define IMPL_OPCODE(OPCODE)void opcode_##OPCODE(sfzt_ctx_s *ctx, BYTE opsize)
+#define IMPL_OPCODE(OPCODE)void opcode_##OPCODE(sfzte_ctx_s *ctx, BYTE opsize)
 #define OP(OPCODE) opcode_##OPCODE
 // Stringify OPCODE
 #define SO(OPCODE) #OPCODE
 
 
-void push_byte(BYTE b, sfzt_ctx_s *ctx);
-void push_word(WORD w, sfzt_ctx_s *ctx);
+void push_byte(BYTE b, sfzte_ctx_s *ctx);
+void push_word(WORD w, sfzte_ctx_s *ctx);
 
-BYTE pull_byte(sfzt_ctx_s *ctx);
-WORD pull_word(sfzt_ctx_s *ctx);
+BYTE pull_byte(sfzte_ctx_s *ctx);
+WORD pull_word(sfzte_ctx_s *ctx);
 
-typedef void (*opcode)(sfzt_ctx_s *ctx, BYTE opsize);
+typedef void (*opcode)(sfzte_ctx_s *ctx, BYTE opsize);
 // TODO : implement cycle counter
 DECL_OPCODE(adc, 0); // Add Memory to Accumulator with Carry
 DECL_OPCODE(and, 0); // AND Memory with Accumulator

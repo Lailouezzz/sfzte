@@ -29,9 +29,9 @@
 
 typedef uint8_t BYTE;
 typedef uint16_t WORD;
-typedef uint16_t sfzt_addr;
-typedef BYTE (*bus_read)(sfzt_addr);
-typedef void (*bus_write)(BYTE, sfzt_addr);
+typedef uint16_t sfzte_addr;
+typedef BYTE (*bus_read)(sfzte_addr);
+typedef void (*bus_write)(BYTE, sfzte_addr);
 
 
 #endif /// #ifndef H_UTIL

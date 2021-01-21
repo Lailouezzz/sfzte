@@ -40,23 +40,23 @@
 
 // REGPC point to next opcode
 
-void push_byte(BYTE b, sfzt_ctx_s *ctx)
+void push_byte(BYTE b, sfzte_ctx_s *ctx)
 {
     WRITE8(b, STACK_ADDR + REGSP--);
     return;
 }
-void push_word(WORD w, sfzt_ctx_s *ctx)
+void push_word(WORD w, sfzte_ctx_s *ctx)
 {
     push_byte((BYTE) (w >> 8) & 0x00FF, ctx);
     push_byte((BYTE) w & 0x00FF, ctx);
     return;
 }
 
-BYTE pull_byte(sfzt_ctx_s *ctx)
+BYTE pull_byte(sfzte_ctx_s *ctx)
 {
     return READ8(STACK_ADDR + (++REGSP));
 }
-WORD pull_word(sfzt_ctx_s *ctx)
+WORD pull_word(sfzte_ctx_s *ctx)
 {
     BYTE lo = pull_byte(ctx);
     BYTE hi = pull_byte(ctx);

@@ -23,16 +23,21 @@
 #include <stdio.h>
 #include "addr_mode.h"
 #include "opcode.h"
-#include "sfzt_context.h"
+#include "sfzte_context.h"
 #include "util.h"
 
 
+#define SFZTE_CB_OK 0
+#define SFZTE_CB_STOP 1
+#define SFZTE_CB_SKIP 2
+
+
 // exec_cb can be used for manage some device 
-typedef BYTE (*exec_cb)(BYTE opsize, sfzt_ctx_s *ctx);
+typedef BYTE (*exec_cb)(BYTE opsize, sfzte_ctx_s *ctx);
 
-void sfzt_reset(sfzt_ctx_s *ctx);
+void sfzte_reset(sfzte_ctx_s *ctx);
 
-void sfzt_run(size_t n, sfzt_ctx_s *ctx, exec_cb cb);
+void sfzte_run(size_t n, sfzte_ctx_s *ctx, exec_cb cb);
 
 
 #endif /// #ifndef H_EXEC

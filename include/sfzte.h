@@ -20,7 +20,7 @@
 #ifndef H_SFZTE
 # define H_SFZTE
 
-# include "sfzte/sfzt_context.h"
+# include "sfzte/sfzte_context.h"
 # include "sfzte/addr_mode.h"
 # include "sfzte/opcode.h"
 # include "sfzte/exec.h"

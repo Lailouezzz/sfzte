@@ -19,22 +19,22 @@
  * ************************************************************************** */
 #ifndef H_ADDR_MODE
 #define H_ADDR_MODE
-#include "sfzt_context.h"
+#include "sfzte_context.h"
 #include "util.h"
-#define DECL_AM(am) BYTE addrmode_##am(sfzt_ctx_s *ctx); \
+#define DECL_AM(am) BYTE addrmode_##am(sfzte_ctx_s *ctx); \
                     int addrmode_disasm_##am(char *dst, size_t maxlen, \
-                                                sfzt_ctx_s *ctx)
+                                                sfzte_ctx_s *ctx)
 
-#define IMPL_AM(am) BYTE addrmode_##am(sfzt_ctx_s *ctx)
+#define IMPL_AM(am) BYTE addrmode_##am(sfzte_ctx_s *ctx)
 #define IMPL_DAM(am) int addrmode_disasm_##am(char *dst, size_t maxlen, \
-                                                 sfzt_ctx_s *ctx)
+                                                 sfzte_ctx_s *ctx)
 
 #define AM(am) (addrmode_##am)
 #define DAM(am) (addrmode_disasm_##am)
 
 
-typedef BYTE (*addrmode)(sfzt_ctx_s *);
-typedef int (*addrmode_disasm)(char *dst, size_t maxlen, sfzt_ctx_s *);
+typedef BYTE (*addrmode)(sfzte_ctx_s *);
+typedef int (*addrmode_disasm)(char *dst, size_t maxlen, sfzte_ctx_s *);
 
 DECL_AM(nnn);
 DECL_AM(acc);
